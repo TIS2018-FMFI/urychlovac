@@ -2,14 +2,19 @@
 #include <SPI.h>
 #include <Wire.h>
 
+const int NUMBEROFDIGITALINPUTS = 5;
+
 SimpleTimer timer;
 double voltageA0 = 0;
-String toPrintA0;
+String toPrintD;
+boolean digitalInputs[NUMBEROFDIGITALINPUTS];
+String digitalInputsNames[NUMBEROFDIGITALINPUTS] = {"dvere", "napatie", "plyn", "hladina", "vypadok"};
 
 void setup() {
   Serial.begin(9600, SERIAL_8N1); //nastavenie seriovej komunikacie
   //kazdych 100ms
   timer.setInterval(100, sendA0);
+  timer.setInterval(100, sendD);
 }
 
 void loop() {
@@ -19,13 +24,31 @@ void loop() {
   voltageA0 = (rawValue / 1024.0) * Vcc;
   //v premennej voltageA0 teraz mame presnu hodnotu napatia
 
+  //precitanie digitalnych hodnot
+  for (int i = 0; i < NUMBEROFDIGITALINPUTS; i++) {
+    digitalInputs[i] = (digitalRead(i) == HIGH);
+  }
+
   timer.run();
 }
 
 void sendA0() {
-  toPrintA0 = String(voltageA0, 2); //zachovame dve desatinne miesta
-  toPrintA0 = "sensor=dvere;value=" + toPrintA0 + ";\n";
+  String toPrintA0 = String(voltageA0, 2); //zachovame dve desatinne miesta
+  toPrintA0 = "teplota;" + toPrintA0 + ";\n";
   Serial.print(toPrintA0);
+}
+
+void sendD() {
+  String toPrintD = "";
+  for (int i = 0; i < NUMBEROFDIGITALINPUTS; i++) {
+    toPrintD += digitalInputsNames[i] + ";";
+    if (digitalInputs[i] == true) {
+      toPrintD += "1;\n";
+    } else {
+      toPrintD += "0;\n";
+    }
+  }
+  Serial.print(toPrintD);
 }
 
 /*Sources: 
