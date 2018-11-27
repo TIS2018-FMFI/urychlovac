@@ -34,14 +34,14 @@ void loop() {
 
 void sendA0() {
   String toPrintA0 = String(voltageA0, 2); //zachovame dve desatinne miesta
-  toPrintA0 = "teplota;" + toPrintA0 + ";\n";
+  toPrintA0 = "f;teplota;" + toPrintA0 + ";\n";
   Serial.print(toPrintA0);
 }
 
 void sendD() {
   String toPrintD = "";
   for (int i = 0; i < NUMBEROFDIGITALINPUTS; i++) {
-    toPrintD += digitalInputsNames[i] + ";";
+    toPrintD += "b;" + digitalInputsNames[i] + ";";
     if (digitalInputs[i] == true) {
       toPrintD += "1;\n";
     } else {
