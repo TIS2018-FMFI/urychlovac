@@ -17,7 +17,6 @@ public class Main {
     private FrontEndSlave frontEnd;
     private NotificationManager notificationManager;
     private Configuration config;
-    private DataManager dataManager;
 
     public Main() {
     }

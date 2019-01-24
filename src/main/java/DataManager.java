@@ -6,11 +6,17 @@ import java.util.List;
  * @author FMPH
  */
 
-
 public class DataManager {
-    public void saveDataToFile(String fileName, LabData data) {
+    private static DataManager ourInstance = new DataManager();
 
+    public static DataManager getInstance() {
+        return ourInstance;
     }
+
+    private DataManager() {
+    }
+
+    public void saveDataToFile(String fileName, LabData data) { }
 
     public List<LabData> loadDataFromFile(String fileName) {
         return null;
