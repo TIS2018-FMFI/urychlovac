@@ -4,7 +4,7 @@ import net.consensys.cava.toml.TomlParseResult;
 import java.util.List;
 
 /**
- * Main class - used to initiate and manage all necessary components of the system
+ * Main class - used to initiate and manage all necessary components of the system.
  *
  * @author FMPH
  */
