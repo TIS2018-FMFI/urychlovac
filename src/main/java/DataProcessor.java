@@ -25,8 +25,16 @@ public class DataProcessor {
     //      0 = measurment/statuses
     //      1 = notification
     //[1] Status of notification arduino
+    //      0 = OK
+    //      1 = NOT OK
 
     public LabData processData(String input) {
+        if (input.charAt(1) == '0') {
+
+        } else if (input.charAt(1) == '1') {
+
+        }
+
         return null;
     }
 }
