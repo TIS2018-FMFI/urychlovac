@@ -8,7 +8,10 @@ import java.util.List;
  */
 
 public class NotificationManager extends Thread {
-    private List<Notification> notifications;
+    private List<NotificationRule> notificationRules;
+
+    public void sendNotification() {};
+
 
     @Override
     public void run() {
