@@ -1,5 +1,3 @@
-import net.consensys.cava.toml.Toml;
-import net.consensys.cava.toml.TomlParseResult;
 
 import java.util.List;
 
@@ -19,9 +17,12 @@ public class Main {
     private Configuration config;
 
     public Main() {
+
+        config = new Configuration("config.toml");
     }
 
     public static void main(String[] args) {
+        new Main();
     }
 
     public Configuration getConfig() {
