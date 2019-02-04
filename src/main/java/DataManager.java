@@ -43,11 +43,11 @@ public class DataManager {
     public void addData(LabData data){
         if(checkData(data)) {
             if (data instanceof MeasuredData) {
-                //String fileName = SENSORS;
-               // saveDataToFile();
+                String fileName = SENSORS.get(data.getId());
+                saveDataToFile(fileName+".txt", "");
             }
             if (data instanceof BinaryStatus) {
-
+                saveDataToFile("binaryData.txt","");
             }
         }
     }
@@ -57,7 +57,7 @@ public class DataManager {
         return false;
     }
 
-    public void saveDataToFile(String fileName, LabData data) {
+    public void saveDataToFile(String fileName, String data) {
         try(FileWriter fw = new FileWriter(fileName, true);
             BufferedWriter bw = new BufferedWriter(fw);
             PrintWriter out = new PrintWriter(bw)) {
