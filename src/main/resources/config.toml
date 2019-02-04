@@ -3,4 +3,30 @@
 title = "Config File"
 
 [owner]
-name = "GPHK"
+name = "FMPH"
+
+[intervals]
+logging_frequency = 9999
+
+[crisis_situations]
+
+  [crisis_situations.high_voltage_doors_open] #nastava ked je spustene vysoke napatie a zaroven su otvorene dvere
+  name = "Otvorené dvere a Vysoké napätie!"
+  level = 1
+  condition = ""
+
+  [crisis_situations.gas_leak]
+  name = "Únik izolačného plynu!"
+  level = 2
+  condition = ""
+
+  [crisis_situations.cooling_fluid_low]
+  name = "Nízka hladina chladiacej kvapaliny!"
+  level = 1
+  condition = ""
+
+
+
+
+
+
