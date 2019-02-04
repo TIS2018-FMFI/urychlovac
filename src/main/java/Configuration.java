@@ -44,23 +44,25 @@ public class Configuration {
 
             String gas_leak_prefix = "gas_leak";
             lst.add(new NotificationRule(
-                    result.getString(crisis_prefix + "." + highVoltageDoors_prefix + ". name"),
-                    result.getLong(crisis_prefix + "." + highVoltageDoors_prefix + ". level"),
-                    result.getString(crisis_prefix + "." + highVoltageDoors_prefix + ". condition")
+                    result.getString(crisis_prefix + "." + gas_leak_prefix + ". name"),
+                    result.getLong(crisis_prefix + "." + gas_leak_prefix + ". level"),
+                    result.getString(crisis_prefix + "." + gas_leak_prefix + ". condition")
             ));
 
             String cooling_fluid_low = "cooling_fluid_low";
             lst.add(new NotificationRule(
-                    result.getString(crisis_prefix + "." + highVoltageDoors_prefix + ". name"),
-                    result.getLong(crisis_prefix + "." + highVoltageDoors_prefix + ". level"),
-                    result.getString(crisis_prefix + "." + highVoltageDoors_prefix + ". condition")
+                    result.getString(crisis_prefix + "." + cooling_fluid_low + ". name"),
+                    result.getLong(crisis_prefix + "." + cooling_fluid_low + ". level"),
+                    result.getString(crisis_prefix + "." + cooling_fluid_low + ". condition")
             ));
 
             setNotificationRules(lst);
 
             // TEST:
-            System.out.println(getLoggingFrequency());
-            System.out.println(getNotificationRules());
+            System.out.println("#### CONFIGURATION TEST: #### \n");
+            System.out.println("Logging frequency: " + getLoggingFrequency());
+            System.out.println("List of notification rules: " + getNotificationRules());
+            System.out.println("\n#### End of CONFIGURATION TEST ####");
         } else {
             System.err.println("ERROR! Configuration: result is null!");
         }
