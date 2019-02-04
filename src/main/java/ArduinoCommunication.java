@@ -19,6 +19,7 @@ public class ArduinoCommunication extends Thread {
     private DataProcessor dataProcessor;
     private MulticastSocket socket = null;
     private byte[] buf = new byte[256];
+    private long lastUpdateTimestamp = System.currentTimeMillis();
 
     public ArduinoCommunication(String ipAddress) {
 
@@ -55,6 +56,7 @@ public class ArduinoCommunication extends Thread {
                 break;
             }
 
+            lastUpdateTimestamp = System.currentTimeMillis();
             dataProcessor.processData(received);
         }
         try {
