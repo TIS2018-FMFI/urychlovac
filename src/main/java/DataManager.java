@@ -6,7 +6,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Data manager class - used to load, process and re-export logged measured data (e.g. vacuum, temperature)
@@ -17,12 +19,42 @@ import java.util.List;
 public class DataManager {
     private static DataManager ourInstance = new DataManager();
     private static final String CSV_SEPARATOR = ";";
+    private static final Map<Integer, String> SENSORS;
+    static {
+        Map<Integer, String> aMap = new HashMap<>();
+        aMap.put(0, "vacuum");
+        aMap.put(1, "temperature");
+        aMap.put(2, "door");
+        aMap.put(3, "voltage");
+        aMap.put(4, "gas");
+        aMap.put(5, "coolant");
+        //measured vacuum temperature
+        //binary dvere napatie plyn chladiaca
+        SENSORS = Collections.unmodifiableMap(aMap);
+    }
 
     public static DataManager getInstance() {
         return ourInstance;
     }
 
     private DataManager() {
+    }
+
+    public void addData(LabData data){
+        if(checkData(data)) {
+            if (data instanceof MeasuredData) {
+                //String fileName = SENSORS;
+               // saveDataToFile();
+            }
+            if (data instanceof BinaryStatus) {
+
+            }
+        }
+    }
+
+    public boolean checkData(LabData data){
+        // TO DO
+        return false;
     }
 
     public void saveDataToFile(String fileName, LabData data) {
