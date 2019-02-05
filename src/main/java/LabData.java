@@ -10,6 +10,11 @@ public class LabData {
     private Integer id;
     private Date timestamp;
 
+    public LabData(Integer id, Date timestamp){
+        setId(id);
+        setTimestamp(timestamp);
+    }
+
     public Integer getId() {
         return id;
     }
