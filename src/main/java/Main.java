@@ -1,4 +1,5 @@
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -9,15 +10,15 @@ import java.util.List;
 
 
 public class Main {
-    private List<ArduinoCommunication> inputArduinos;  //for inputs - binary statuses, measuring sensors
-    private List<ArduinoCommunication> outputArduinos; //for output - notifications
+    private static ArduinoCommunication arduinoData;
 
-    private FrontEndSlave frontEnd;
-    private NotificationManager notificationManager;
-    private Configuration config;
-    private DataManager dataManager;
+    private static FrontEndSlave frontEnd;
+    private static NotificationManager notificationManager;
+    private static Configuration config;
 
     public Main() {
+        arduinoData = new ArduinoCommunication("230.1.1.1");
+        arduinoData.start();
 
         config = new Configuration("config.toml");
     }
@@ -26,7 +27,7 @@ public class Main {
         new Main();
     }
 
-    public Configuration getConfig() {
+    public static Configuration getConfig() {
         return config;
     }
 }
