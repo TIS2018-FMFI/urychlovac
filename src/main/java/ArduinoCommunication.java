@@ -1,8 +1,5 @@
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.InetAddress;
-import java.net.MulticastSocket;
-import java.net.UnknownHostException;
+import java.net.*;
 
 /**
  * Arduino master class - used to communicate with Arduino, process and distribute its messages
@@ -22,7 +19,8 @@ public class ArduinoCommunication extends Thread {
     private long lastUpdateTimestamp = System.currentTimeMillis();
 
     public ArduinoCommunication(String ipAddress) {
-
+        this.ipAddress = ipAddress;
+        dataProcessor = new DataProcessor();
     }
 
     @Override
@@ -32,24 +30,36 @@ public class ArduinoCommunication extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         InetAddress group = null;
         try {
             group = InetAddress.getByName(ipAddress);
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
+
         try {
             socket.joinGroup(group);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        try {
+            socket.setSoTimeout((int)Main.getConfig().getLoggingFrequency()*2);
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+
         while (true) {
             DatagramPacket packet = new DatagramPacket(buf, buf.length);
             try {
                 socket.receive(packet);
+            } catch (SocketTimeoutException e) {
+                //TODO send notification - he dead
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
             String received = new String(
                     packet.getData(), 0, packet.getLength());
             if ("end".equals(received)) {
@@ -59,11 +69,13 @@ public class ArduinoCommunication extends Thread {
             lastUpdateTimestamp = System.currentTimeMillis();
             dataProcessor.processData(received);
         }
+
         try {
             socket.leaveGroup(group);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         socket.close();
     }
 
