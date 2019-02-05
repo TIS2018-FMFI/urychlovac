@@ -6,7 +6,7 @@ title = "Config File"
 name = "FMPH"
 
 [intervals]
-logging_frequency = 9999
+logging_frequency = 1000    # 1000ms = 1s
 
 [crisis_situations]
 
