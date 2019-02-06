@@ -28,7 +28,7 @@ public class Configuration {
 
         if (result != null){
             result.errors().forEach(error -> System.err.println(error.toString()));
-            setLoggingFrequency(result.getLong("intervals.logging_frequency"));
+            setLoggingFrequency(result.getLong("intervals . logging_frequency"));
 
             ArrayList<NotificationRule> lst = new ArrayList<>();
 
@@ -59,10 +59,10 @@ public class Configuration {
             setNotificationRules(lst);
 
             // TEST:
-            System.out.println("#### CONFIGURATION TEST: #### \n");
+            System.out.println("################ CONFIGURATION TEST: ################ \n");
             System.out.println("Logging frequency: " + getLoggingFrequency());
             System.out.println("List of notification rules: " + getNotificationRules());
-            System.out.println("\n#### End of CONFIGURATION TEST ####");
+            System.out.println("\n################ End of CONFIGURATION TEST ################");
         } else {
             System.err.println("ERROR! Configuration: result is null!");
         }
