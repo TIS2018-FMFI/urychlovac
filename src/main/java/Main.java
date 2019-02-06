@@ -17,7 +17,7 @@ public class Main {
     private static Configuration config;
 
     public Main() {
-        arduinoData = new ArduinoCommunication("230.1.1.1");
+        arduinoData = new ArduinoCommunication("230.1.1.1", 0);
         arduinoData.start();
 
         config = new Configuration("config.toml");

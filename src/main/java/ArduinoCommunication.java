@@ -11,6 +11,7 @@ import java.net.*;
 public class ArduinoCommunication extends Thread {
     // source of multicast receive code: https://www.baeldung.com/java-broadcast-multicast
 
+    private int arduinoID = 0;
     private final static int MULTICAST_PORT = 7410;
     private String ipAddress;
     private DataProcessor dataProcessor;
@@ -18,9 +19,11 @@ public class ArduinoCommunication extends Thread {
     private byte[] buf = new byte[256];
     private long lastUpdateTimestamp = System.currentTimeMillis();
 
-    public ArduinoCommunication(String ipAddress) {
+    public ArduinoCommunication(String ipAddress, int arduinoID) {
         this.ipAddress = ipAddress;
         dataProcessor = new DataProcessor();
+
+        this.arduinoID = arduinoID;
     }
 
     @Override
@@ -56,6 +59,7 @@ public class ArduinoCommunication extends Thread {
                 socket.receive(packet);
             } catch (SocketTimeoutException e) {
                 //TODO send notification - he dead
+                System.out.println("Arduino with ID " + arduinoID + " timed out!");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -67,8 +71,11 @@ public class ArduinoCommunication extends Thread {
             }
 
             lastUpdateTimestamp = System.currentTimeMillis();
-            //TODO send LabData to be processed
-            dataProcessor.processData(received);
+
+            LabData receivedData = dataProcessor.processData(received);
+            if (receivedData != null) {
+                DataManager.getInstance().addData(receivedData);
+            }
         }
 
         try {
@@ -78,9 +85,5 @@ public class ArduinoCommunication extends Thread {
         }
 
         socket.close();
-    }
-
-    public void sendMessage(String message) {
-
     }
 }
