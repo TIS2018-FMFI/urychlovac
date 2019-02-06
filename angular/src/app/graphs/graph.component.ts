@@ -8,10 +8,10 @@ window['Highcharts'] = Highcharts;
 
 @Component({
   selector: 'app-line-graph',
-  templateUrl: './line-graph.component.html',
+  templateUrl: './graph.component.html',
   styleUrls: ['./graphs.component.css']
 })
-export class LineGraphComponent implements OnInit{
+export class GraphComponent implements OnInit{
   @Input() graphType = '';
   @Input() yAxisTitle = '';
   chart;
@@ -38,6 +38,15 @@ export class LineGraphComponent implements OnInit{
   ngOnInit(){
     this.chart.title.text = this.typeLists[this.graphType][this.graphName].name;
     this.chart.yAxis.title.text = this.yAxisTitle;
+  }
+
+  changeInterval(event){
+    //TODO: interval na grafy -  bude volat metodu v service
+    console.log(event.target.value);
+  }
+
+  changeGraphType(event){
+    console.log(event.target.value, this.graphType);
   }
   
 }

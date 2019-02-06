@@ -70,7 +70,4 @@ export class StatusHeaderComponent implements OnInit {
     this.lgModal.show()
   }
 
-  changeInterval(){
-    //TODO: interval na grafy -  bude volat metodu v service
-  }
 }
