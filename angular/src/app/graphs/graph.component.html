@@ -3,7 +3,7 @@
         <select 
             class="form-control" 
             [(ngModel)]="periodIndex" 
-            (change)="changeInterval($event)"      
+            (change)="changeInterval()"      
         >
             <option 
                 *ngFor="let period of periodList; let i = index" 
@@ -18,7 +18,7 @@
         <select 
             class="form-control"   
             [(ngModel)]="graphName"   
-            (change)="changeGraphType($event)" 
+            (change)="changeGraphType()" 
         >
             <option 
                 *ngFor="let type of typeLists[graphType]; let i = index" 

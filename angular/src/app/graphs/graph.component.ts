@@ -40,13 +40,13 @@ export class GraphComponent implements OnInit{
     this.chart.yAxis.title.text = this.yAxisTitle;
   }
 
-  changeInterval(event){
+  changeInterval(){
     //TODO: interval na grafy -  bude volat metodu v service
-    console.log(event.target.value);
+    console.log(this.periodList[this.periodIndex]);
   }
 
-  changeGraphType(event){
-    console.log(event.target.value, this.graphType);
+  changeGraphType(){
+    console.log(this.typeLists[this.graphType][this.graphName]);
   }
   
 }
