@@ -67,6 +67,7 @@ public class ArduinoCommunication extends Thread {
             }
 
             lastUpdateTimestamp = System.currentTimeMillis();
+            //TODO send LabData to be processed
             dataProcessor.processData(received);
         }
 
