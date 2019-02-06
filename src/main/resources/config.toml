@@ -6,24 +6,24 @@ title = "Config File"
 name = "FMPH"
 
 [intervals]
-logging_frequency = 9999
+logging_frequency = 1000    # 1000ms = 1s
 
 [crisis_situations]
 
-  [crisis_situations.high_voltage_doors_open] #nastava ked je spustene vysoke napatie a zaroven su otvorene dvere
+  [crisis_situations.high_voltage_doors_open] # nastava ked je spustene vysoke napatie a zaroven su otvorene dvere
   name = "Otvorené dvere a Vysoké napätie!"
   level = 1
-  condition = ""
+  condition = "2&3"     # 2 = senzor otvorenych dveri; 3 = senzor vysokeho napatia
 
   [crisis_situations.gas_leak]
   name = "Únik izolačného plynu!"
   level = 2
-  condition = ""
+  condition = "4"
 
   [crisis_situations.cooling_fluid_low]
   name = "Nízka hladina chladiacej kvapaliny!"
   level = 1
-  condition = ""
+  condition = "5"
 
 
 
