@@ -63,7 +63,7 @@ public class DataProcessor {
                     } else if (!separator) {
                         value = value * 10 + input.charAt(i) - '0';
                     } else {
-                        value += (input.charAt(i) - '0')/digit;
+                        value += (float)(input.charAt(i) - '0')/digit;
                         digit *= 10;
                     }
 
