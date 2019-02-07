@@ -10,22 +10,57 @@ import java.net.*;
 
 public class ArduinoCommunication extends Thread {
     // source of multicast receive code: https://www.baeldung.com/java-broadcast-multicast
+    // source of unicast receive code: https://www.baeldung.com/udp-in-java
 
-    private final static int MULTICAST_PORT = 7410;
-    private String ipAddress;
+    private int arduinoID = 0;
+
+    //private String ipAddress;
     private DataProcessor dataProcessor;
-    private MulticastSocket socket = null;
     private byte[] buf = new byte[256];
     private long lastUpdateTimestamp = System.currentTimeMillis();
 
-    public ArduinoCommunication(String ipAddress) {
-        this.ipAddress = ipAddress;
+    private DatagramSocket socket;
+    //private final static int MULTICAST_PORT = 7410;
+    //private MulticastSocket socket = null;
+
+    public ArduinoCommunication(/*String ipAddress, */int arduinoID) {
+        /*this.ipAddress = ipAddress;*/
+        this.arduinoID = arduinoID;
         dataProcessor = new DataProcessor();
+        try {
+            socket = new DatagramSocket(5555);
+            socket.setSoTimeout((int)Main.getConfig().getLoggingFrequency()*2);
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void run() {
-        try {
+        while (true) {
+            DatagramPacket packet = new DatagramPacket(buf, buf.length);
+            System.out.println("Waiting for packet...");
+
+            try {
+                socket.receive(packet);
+            } catch (SocketTimeoutException e) {
+                //TODO send notification - he dead
+                System.out.println("Arduino with ID " + arduinoID + " timed out!");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            String received = new String(packet.getData(), 0, packet.getLength());
+            lastUpdateTimestamp = System.currentTimeMillis();
+            System.out.println("Received packet: " + received);
+
+            LabData receivedData = dataProcessor.processData(received);
+            if (receivedData != null) {
+                DataManager.getInstance().addData(receivedData);
+            }
+        }
+
+        /*try {
             socket = new MulticastSocket(MULTICAST_PORT);
         } catch (IOException e) {
             e.printStackTrace();
@@ -51,11 +86,14 @@ public class ArduinoCommunication extends Thread {
         }
 
         while (true) {
+            System.out.println("Waiting for UDP packet...");
+
             DatagramPacket packet = new DatagramPacket(buf, buf.length);
             try {
                 socket.receive(packet);
             } catch (SocketTimeoutException e) {
                 //TODO send notification - he dead
+                System.out.println("Arduino with ID " + arduinoID + " timed out!");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -67,7 +105,12 @@ public class ArduinoCommunication extends Thread {
             }
 
             lastUpdateTimestamp = System.currentTimeMillis();
-            dataProcessor.processData(received);
+
+            System.out.println(received);
+            LabData receivedData = dataProcessor.processData(received);
+            if (receivedData != null) {
+                DataManager.getInstance().addData(receivedData);
+            }
         }
 
         try {
@@ -76,10 +119,6 @@ public class ArduinoCommunication extends Thread {
             e.printStackTrace();
         }
 
-        socket.close();
-    }
-
-    public void sendMessage(String message) {
-
+        socket.close();*/
     }
 }
