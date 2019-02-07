@@ -7,14 +7,9 @@ import java.util.List;
  * @author FMPH
  */
 
-public class NotificationManager extends Thread {
-    private List<NotificationRule> notificationRules;
+public class NotificationManager{
+    //private List<NotificationRule> notificationRules;
 
     public void sendNotification() {};
 
-
-    @Override
-    public void run() {
-        // check conditions of notifications, send notification if needed
-    }
 }
