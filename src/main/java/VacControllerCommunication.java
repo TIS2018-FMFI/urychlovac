@@ -1,4 +1,6 @@
 import com.fazecast.jSerialComm.SerialPort;
+import com.fazecast.jSerialComm.SerialPortEvent;
+import com.fazecast.jSerialComm.SerialPortPacketListener;
 
 import java.util.Date;
 
@@ -7,72 +9,58 @@ import java.util.Date;
  *
  * @author FMPH
  */
-public class VacControllerCommunication extends Thread {
+public class VacControllerCommunication  {
     private static final int VACUUM_ID = 0;
+    private static final int BUFFER_SIZE = 20;
     SerialPort comPort;
     byte[] buffer;
 
 
+////////////////// NESTED CLASS //////////////////
+    // source: https://github.com/Fazecast/jSerialComm/wiki/Event-Based-Reading-Usage-Example
 
-    public VacControllerCommunication() {
+    private final class PacketListener implements SerialPortPacketListener
+    {
+        @Override
+        public int getListeningEvents() { return SerialPort.LISTENING_EVENT_DATA_RECEIVED; }
+
+        @Override
+        public int getPacketSize() { return BUFFER_SIZE; }
+
+        @Override
+        public void serialEvent(SerialPortEvent event)
+        {
+            buffer = event.getReceivedData();
+            System.out.println("\nVacuum Controller: Received data of size: " + buffer.length);
+
+            // Testovaci vypis:
+            System.out.println("Vacuum Controller: DATA:");
+            for (int i = 0; i < buffer.length; ++i)
+                System.out.print((char)buffer[i]);
+            System.out.println("\n");
+
+            // Ulozi data:
+            MeasuredData mData = new MeasuredData(VACUUM_ID, new Date(), getDataFromBuffer(buffer));
+            DataManager.getInstance().addData(mData);
+
+        }
+    }
+////////////////// end of NESTED CLASS //////////////////
+
+
+    // CONSTRUCTOR //
+    public VacControllerCommunication() throws InterruptedException {
         // konfiguruj port
         comPort = SerialPort.getCommPorts()[0];
         comPort.openPort();
 
+        PacketListener listener = new PacketListener(); // TODO ked skonci
+        comPort.addDataListener(listener);
 
-
+//        comPort.closePort(); // We can not close port now.
     }
 
-    @Override
-    public void run() {
-        final String address = "000";
-        final String dataRequestAction = "00";
-        final String parameterNumber = "000";     // TODO!
-        final String dataRequestLengthAndData = "02=?";
-        final String firstPart = address + dataRequestAction + parameterNumber + dataRequestLengthAndData;
-        String checksum = calculateChecksum(firstPart + );
-        final String cr = "13";
 
-
-        final byte[] writeBuffer = new byte[16];
-        String string4Buffer = address +
-        writeBuffer = ...
-
-//        V cykle:
-//          1. posli REQUEST
-//          2. cakaj kym pride (cez listener? )
-
-
-        // reading
-        try {
-            while (true)
-            {
-                // transmitting (data request):
-
-                comPort.writeBytes(writeBuffer, writeBuffer.length);
-
-
-
-                // waiting for request:
-                while (comPort.bytesAvailable() == 0)
-                    Thread.sleep(20);
-
-                byte[] readBuffer = new byte[comPort.bytesAvailable()];
-                int numRead = comPort.readBytes(readBuffer, readBuffer.length); // writes into buffer;
-                // numRead is number of bytes successfully read, or -1 if there was an error erading from the port
-
-//                System.out.println("Read " + data + " bytes.");
-                if (numRead != -1){
-//                    LabData receivedData = dataProcessor.processData(received);
-                    MeasuredData mData = new MeasuredData(VACUUM_ID, new Date(), getDataFromBuffer(readBuffer));
-                    DataManager.getInstance().addData(mData);
-
-                }
-
-            }
-        } catch (Exception e) { e.printStackTrace(); }
-        comPort.closePort();
-    }
 
     private String calculateChecksum(String string) {
         byte[] bytes = string.getBytes();
@@ -89,5 +77,8 @@ public class VacControllerCommunication extends Thread {
         return 9.999999999f;    //TODO
 
     }
+
+
+
 
 }
