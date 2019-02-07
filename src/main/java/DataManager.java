@@ -42,18 +42,36 @@ public class DataManager {
 
     public void addData(LabData data){
         if(checkData(data)) {
+            String writeData = convertToCSV(data);
             if (data instanceof MeasuredData) {
                 String fileName = SENSORS.get(data.getId());
-                saveDataToFile(fileName+".txt", "");
+                saveDataToFile(fileName+".txt", writeData);
             }
             if (data instanceof BinaryStatus) {
-                saveDataToFile("binaryData.txt","");
+                saveDataToFile("binaryData.txt",writeData);
             }
+        } else{
+            // posli notifikaciu
         }
+    }
+
+    public String convertToCSV(LabData data){
+        String writeData=null;
+        if (data instanceof MeasuredData) {
+            writeData = data.getId().toString()+CSV_SEPARATOR+data.getTimestamp().toString()+CSV_SEPARATOR+((MeasuredData) data).getValue();
+        } else
+        if (data instanceof BinaryStatus) {
+            writeData = data.getId().toString()+CSV_SEPARATOR+data.getTimestamp().toString()+CSV_SEPARATOR+((BinaryStatus) data).isValue();
+        }
+        return writeData;
     }
 
     public boolean checkData(LabData data){
         // TO DO
+        List<NotificationRule> rules = Main.getConfig().getNotificationRules();
+        for (NotificationRule rule : rules) {
+            //skontroluj data
+        }
         return false;
     }
 
@@ -61,11 +79,7 @@ public class DataManager {
         try(FileWriter fw = new FileWriter(fileName, true);
             BufferedWriter bw = new BufferedWriter(fw);
             PrintWriter out = new PrintWriter(bw)) {
-            //pripise jeden riadok do suboru;
-            String temp = "temporary solution";
-            //String temp = data.getId().toString()+CSV_SEPARATOR+data.getTimestamp()+data.getValue();
-            //String temp = data.getId().toString()+CSV_SEPARATOR+data.getTimestamp()+data.isValue().toString();
-            out.println(temp);
+            out.println(data);
         } catch (IOException e) {
             //exception handling left as an exercise for the reader
         }
@@ -84,7 +98,20 @@ public class DataManager {
         }
         return result;
     }
-    public List<LabData> loadDataSensorTimePeriod(int sensorId, int fromTime, int toTime) { return null; }
+    public List<LabData> loadDataSensorTimePeriod(int sensorId, int fromTime, int toTime) {
+        return null;
+    }
 
-    public List<String> getListOfLogs() {return null;}
+    public List<String> getListOfLogs(String fileName) {
+        List<String> lines = Collections.emptyList();
+        try
+        {
+            lines = Files.readAllLines(Paths.get(fileName), StandardCharsets.UTF_8);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        return lines;
+    }
 }
