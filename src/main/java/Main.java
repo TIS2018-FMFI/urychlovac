@@ -11,6 +11,7 @@ import java.util.List;
 
 public class Main {
     private static ArduinoCommunication arduinoData;
+    private static VacControllerCommunication vacControllerCommunication;
 
     private static FrontEndSlave frontEnd;
     private static NotificationManager notificationManager;
@@ -21,6 +22,9 @@ public class Main {
 
         arduinoData = new ArduinoCommunication(0);
         arduinoData.start();
+
+        vacControllerCommunication = new VacControllerCommunication();
+        vacControllerCommunication.start();
     }
 
     public static void main(String[] args) {
