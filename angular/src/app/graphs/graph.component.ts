@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import * as Highcharts from "highcharts";
 import { PeriodListHours, PeriodListDays, PeriodListMinutes } from '../shared/period.enum';
 import { TypeTemperatureList, TypeHumidityList } from '../shared/type.enum';
+import { GraphDataService } from '../service/graph-data.service';
 window['Highcharts'] = Highcharts;
 
 @Component({
@@ -23,7 +24,10 @@ export class GraphComponent implements OnInit{
   };
   graphName: number = 0;
 
-  constructor(){
+  constructor(private graphDataService: GraphDataService){
+    this.graphDataService.getGraphData('temperature/Acc/30mins').subscribe(
+      data => console.log("fok off", data)
+    );
     const clonedChart = _.cloneDeep(SCATTER_CHART);
 
     const chart = {

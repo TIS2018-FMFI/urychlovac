@@ -5,7 +5,7 @@ import { LiveFeedComponent } from './live-feed/live-feed.component';
 import { GraphComponent } from './graphs/graph.component';
 
 const appRoutes: Routes = [
-    { path: '', redirectTo: '/dashboard', pathMatch: 'full'},
+    // { path: '', redirectTo: '/dashboard', pathMatch: 'full'},
     { path: 'live-feed', component: LiveFeedComponent },
     { path: 'graphs', component: GraphComponent }
 ]

@@ -9,6 +9,9 @@ import { AppRoutingModule } from './app-routing.module'
 import { Ng2HighchartsModule } from 'ng2-highcharts';
 import { FormsModule } from '@angular/forms';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { GraphDataService } from './service/graph-data.service';
+import { DataService } from './service/data.service';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -18,13 +21,17 @@ import { ModalModule } from 'ngx-bootstrap/modal';
     GraphComponent,
   ],
   imports: [
+    HttpClientModule,
     BrowserModule,
     Ng2HighchartsModule,
     AppRoutingModule,
     FormsModule,
     ModalModule.forRoot(),
   ],
-  providers: [],
+  providers: [
+    DataService,
+    GraphDataService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
