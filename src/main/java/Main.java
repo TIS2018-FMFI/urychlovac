@@ -17,10 +17,10 @@ public class Main {
     private static Configuration config;
 
     public Main() {
-        arduinoData = new ArduinoCommunication("230.1.1.1");
-        arduinoData.start();
-
         config = new Configuration("config.toml");
+
+        arduinoData = new ArduinoCommunication(0);
+        arduinoData.start();
     }
 
     public static void main(String[] args) {
