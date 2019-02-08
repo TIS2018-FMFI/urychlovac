@@ -20,12 +20,12 @@ public class DataManager {
     private static final Map<Integer, String> SENSORS;
     static {
         Map<Integer, String> aMap = new HashMap<>();
-        aMap.put(0, "vacuum");
-        aMap.put(1, "temperature");
-        aMap.put(2, "door");
-        aMap.put(3, "voltage");
-        aMap.put(4, "gas");
-        aMap.put(5, "coolant");
+        aMap.put(0, "DHT22_temperature"); //teplota measured
+        aMap.put(1, "DHT22_humidity"); //vlhkost measured
+        aMap.put(2, "ReedSwitch"); //Dvere boolean
+        aMap.put(3, "DS18_cooling_water_temp"); //teplota measured
+        aMap.put(4, "Optic_water_level"); //stav hladiny boolean
+        aMap.put(5, "Vacuum_gauge"); //stav vakua boolean
         //measured: vacuum temperature
         //binary: dvere napatie plyn chladiaca
         SENSORS = Collections.unmodifiableMap(aMap);
@@ -110,7 +110,7 @@ public class DataManager {
     }
 
     public void saveDataToFile(String fileName, String data) {
-        try(FileWriter fw = new FileWriter(fileName, true);
+        try(FileWriter fw = new FileWriter(ROOT_PATH+fileName+".txt", true);
             BufferedWriter bw = new BufferedWriter(fw);
             PrintWriter out = new PrintWriter(bw)) {
             out.println(data);
