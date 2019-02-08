@@ -11,6 +11,8 @@ import java.util.List;
 
 public class Main {
     private static ArduinoCommunication arduinoData;
+    private static ArduinoCommunication arduinoNotif1;
+    private static ArduinoCommunication arduinoNotif2;
 
     private static FrontEndSlave frontEnd;
     private static NotificationManager notificationManager;
@@ -19,8 +21,14 @@ public class Main {
     public Main() {
         config = new Configuration("config.toml");
 
-        arduinoData = new ArduinoCommunication(0);
+        arduinoData = new ArduinoCommunication("192.168.1.100",0);
         arduinoData.start();
+
+        arduinoNotif1 = new ArduinoCommunication("192.168.1.101",1);
+        arduinoNotif1.start();
+
+        arduinoNotif2 = new ArduinoCommunication("192.168.1.102",2);
+        arduinoNotif2.start();
     }
 
     public static void main(String[] args) {
