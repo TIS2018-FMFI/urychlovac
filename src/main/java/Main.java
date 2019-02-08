@@ -19,6 +19,7 @@ public class Main {
     private static FrontEndSlave frontEnd;
     private static NotificationManager notificationManager;
     private static Configuration config;
+    private static VacControllerCommunication vacControllerCommunication;
 
     public Main() {
         config = new Configuration("config.toml");
@@ -37,6 +38,10 @@ public class Main {
 
         arduinoNotif2 = new ArduinoCommunication("147.213.232.144",4);
         arduinoNotif2.start();
+
+
+        vacControllerCommunication = new VacControllerCommunication();
+
     }
 
     public static void main(String[] args) {

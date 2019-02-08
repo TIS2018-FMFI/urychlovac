@@ -28,8 +28,8 @@ public class DataManager {
         aMap.put(3, "voltage");
         aMap.put(4, "gas");
         aMap.put(5, "coolant");
-        //measured vacuum temperature
-        //binary dvere napatie plyn chladiaca
+        //measured: vacuum temperature
+        //binary: dvere napatie plyn chladiaca
         SENSORS = Collections.unmodifiableMap(aMap);
     }
 
