@@ -23,19 +23,19 @@ public class Main {
     public Main() {
         config = new Configuration("config.toml");
 
-        arduinoData1 = new ArduinoCommunication("192.168.1.100",0);
+        arduinoData1 = new ArduinoCommunication("147.213.232.140",0);
         arduinoData1.start();
 
-        arduinoData2 = new ArduinoCommunication("192.168.1.100",1);
+        arduinoData2 = new ArduinoCommunication("147.213.232.141",1);
         arduinoData2.start();
 
-        arduinoData3 = new ArduinoCommunication("192.168.1.100",2);
+        arduinoData3 = new ArduinoCommunication("147.213.232.142",2);
         arduinoData3.start();
 
-        arduinoNotif1 = new ArduinoCommunication("192.168.1.101",3);
+        arduinoNotif1 = new ArduinoCommunication("147.213.232.143",3);
         arduinoNotif1.start();
 
-        arduinoNotif2 = new ArduinoCommunication("192.168.1.102",4);
+        arduinoNotif2 = new ArduinoCommunication("147.213.232.144",4);
         arduinoNotif2.start();
     }
 
