@@ -125,7 +125,7 @@ public class DataManager {
         List<String> lines = Collections.emptyList();
         try
         {
-            lines = Files.readAllLines(Paths.get(ROOT_PATH+fileName), StandardCharsets.UTF_8);
+            lines = Files.readAllLines(Paths.get(ROOT_PATH+fileName+".txt"), StandardCharsets.UTF_8);
         }
         catch (IOException e)
         {
@@ -180,7 +180,7 @@ public class DataManager {
         List<String> lines = Collections.emptyList();
         try
         {
-            lines = Files.readAllLines(Paths.get(ROOT_PATH+fileName), StandardCharsets.UTF_8);
+            lines = Files.readAllLines(Paths.get(ROOT_PATH+fileName+".txt"), StandardCharsets.UTF_8);
         }
         catch (IOException e)
         {
