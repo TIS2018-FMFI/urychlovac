@@ -30,4 +30,6 @@ public class Main {
     public static Configuration getConfig() {
         return config;
     }
+
+    public static NotificationManager getNotificationManager(){return notificationManager;}
 }

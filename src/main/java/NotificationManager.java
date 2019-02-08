@@ -8,8 +8,9 @@ import java.util.List;
  */
 
 public class NotificationManager{
-    //private List<NotificationRule> notificationRules;
 
-    public void sendNotification() {};
+    public void sendNotification(NotificationRule rule) {
+
+    };
 
 }
