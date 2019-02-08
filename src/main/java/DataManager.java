@@ -17,6 +17,7 @@ import java.util.*;
 public class DataManager {
     private static DataManager ourInstance = new DataManager();
     private static final String CSV_SEPARATOR = ";";
+    private static String ROOT_PATH="/home/matfyz/log/";
     private static final Map<Integer, String> SENSORS;
     static {
         Map<Integer, String> aMap = new HashMap<>();
@@ -41,14 +42,15 @@ public class DataManager {
     public void addData(LabData data){
         long freq = Main.getConfig().getLoggingFrequency();
         if(checkData(data)) {
-            if(timePassed("filename",data.getId(),freq)) {
+            String fileName = SENSORS.get(data.getId());
+            if(timePassed(fileName+".txt",data.getId(),freq)) {
                 String writeData = convertToCSV(data);
                 if (data instanceof MeasuredData) {
-                    String fileName = SENSORS.get(data.getId());
+
                     saveDataToFile(fileName+".txt", writeData);
                 }
                 if (data instanceof BinaryStatus) {
-                    saveDataToFile("binaryData.txt",writeData);
+                    saveDataToFile(fileName+".txt",writeData);
                 }
             }
         } else{
@@ -60,17 +62,16 @@ public class DataManager {
         List<String> lines = Collections.emptyList();
         try
         {
-            //ZISTIT NAZOV TEXTAKU
             lines = Files.readAllLines(Paths.get(SENSORS.get(id)+".txt"), StandardCharsets.UTF_8);
         }
         catch (IOException e)
         {
             e.printStackTrace();
         }
-        for (int i= lines.size();i>=0;i--){
+        for (int i= lines.size()-1;i>=0;i--){
             String[] line = lines.get(i).split(CSV_SEPARATOR);
             Date date = new Date(line[1]);
-            if (Integer.parseInt(line[0])==id && new Date().getTime()-date.getTime()>duration){
+            if (Integer.parseInt(line[0])==id && new Date().getTime()-date.getTime()>=duration){
                 return true;
             }
         }
@@ -99,10 +100,10 @@ public class DataManager {
                     if(data.getId() == Integer.parseInt(condition) && ((BinaryStatus) data).isValue()){
                         return true;
                     }
+                    //TODO poslat notifikaciu s notif rule
                     else return false;
                 }
             }
-
         }
         return true;
     }
@@ -128,10 +129,28 @@ public class DataManager {
         {
             e.printStackTrace();
         }
+        for (String line : lines){
+            String[] data = line.split(CSV_SEPARATOR);
+            int sensorId = Integer.parseInt(data[0]);
+            Date time = new Date(data[1]);
+            if(data[2].equals("true") || data[2].equals("false")){
+                result.add(new BinaryStatus(sensorId, time, Boolean.valueOf(data[2])));
+            } else {
+                result.add(new MeasuredData(sensorId, time, Float.parseFloat(data[2])));
+            }
+
+        }
         return result;
     }
     public List<LabData> loadDataSensorTimePeriod(int sensorId, Date fromTime, Date toTime) {
-        // ZISTIT CI BINARY ALEBO MEASUERED
+        List<LabData> result = loadDataFromFile(SENSORS.get(sensorId)+".txt");
+        for (LabData data : result){
+            if (data.getId()==sensorId && (data.getTimestamp().after(fromTime) && data.getTimestamp().before(toTime))){
+                result.add(data);
+            }
+        }
+        return result;
+    /*    // ZISTIT CI BINARY ALEBO MEASUERED
         List<LabData> result = new ArrayList<>();
         List<String> lines = Collections.emptyList();
         try
@@ -152,7 +171,7 @@ public class DataManager {
                // result.add(new LabData(sensorId, time, data[2]));
             }
         }
-        return result;
+        return result;*/
     }
 
     public List<String> getListOfLogs(String fileName) {
