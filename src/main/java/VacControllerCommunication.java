@@ -77,7 +77,7 @@ public class VacControllerCommunication  {
     }
 
 
-
+// momentalne netreba
     private String calculateChecksum(String string) {
         byte[] bytes = string.getBytes();
         int sum = 0;
