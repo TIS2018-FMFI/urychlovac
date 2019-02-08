@@ -24,7 +24,6 @@ public class Main {
         arduinoData.start();
 
         vacControllerCommunication = new VacControllerCommunication();
-        vacControllerCommunication.start();
     }
 
     public static void main(String[] args) {
