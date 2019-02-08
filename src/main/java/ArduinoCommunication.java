@@ -15,6 +15,7 @@ public class ArduinoCommunication extends Thread {
     private int arduinoID = 0;
 
     private String ipAddress;
+
     private DataProcessor dataProcessor;
     private byte[] buf = new byte[256];
     private long lastUpdateTimestamp = System.currentTimeMillis();
