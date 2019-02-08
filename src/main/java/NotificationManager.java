@@ -7,14 +7,17 @@ import java.util.List;
  * @author FMPH
  */
 
-public class NotificationManager extends Thread {
-    private List<NotificationRule> notificationRules;
+public class NotificationManager{
 
-    public void sendNotification() {};
+    public void sendNotification(NotificationRule rule) {
+        Main.getArduinoNotif1().sendMessage(rule.getText());
+        Main.getArduinoNotif2().sendMessage(rule.getText());
+        //TODO dorobit frontend funkciu
+    };
 
-
-    @Override
-    public void run() {
-        // check conditions of notifications, send notification if needed
+    public void sendNotificationArduinoFault(int arduinoId){
+        Main.getArduinoNotif1().sendMessage("CHYBA - Arduino s id "+String.valueOf(arduinoId)+" sa nehlasi");
+        Main.getArduinoNotif2().sendMessage("CHYBA - Arduino s id "+String.valueOf(arduinoId)+" sa nehlasi");
     }
+
 }

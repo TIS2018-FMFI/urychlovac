@@ -41,7 +41,6 @@ public class Main {
 
 
         vacControllerCommunication = new VacControllerCommunication();
-
     }
 
     public static void main(String[] args) {
@@ -50,5 +49,27 @@ public class Main {
 
     public static Configuration getConfig() {
         return config;
+    }
+
+    public static NotificationManager getNotificationManager(){return notificationManager;}
+
+    public static ArduinoCommunication getArduinoData1() {
+        return arduinoData1;
+    }
+
+    public static ArduinoCommunication getArduinoData2() {
+        return arduinoData2;
+    }
+
+    public static ArduinoCommunication getArduinoData3() {
+        return arduinoData3;
+    }
+
+    public static ArduinoCommunication getArduinoNotif1() {
+        return arduinoNotif1;
+    }
+
+    public static ArduinoCommunication getArduinoNotif2() {
+        return arduinoNotif2;
     }
 }
