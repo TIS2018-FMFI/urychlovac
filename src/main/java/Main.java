@@ -10,7 +10,9 @@ import java.util.List;
 
 
 public class Main {
-    private static ArduinoCommunication arduinoData;
+    private static ArduinoCommunication arduinoData1;
+    private static ArduinoCommunication arduinoData2;
+    private static ArduinoCommunication arduinoData3;
     private static ArduinoCommunication arduinoNotif1;
     private static ArduinoCommunication arduinoNotif2;
 
@@ -21,13 +23,19 @@ public class Main {
     public Main() {
         config = new Configuration("config.toml");
 
-        arduinoData = new ArduinoCommunication("192.168.1.100",0);
-        arduinoData.start();
+        arduinoData1 = new ArduinoCommunication("192.168.1.100",0);
+        arduinoData1.start();
 
-        arduinoNotif1 = new ArduinoCommunication("192.168.1.101",1);
+        arduinoData2 = new ArduinoCommunication("192.168.1.100",1);
+        arduinoData2.start();
+
+        arduinoData3 = new ArduinoCommunication("192.168.1.100",2);
+        arduinoData3.start();
+
+        arduinoNotif1 = new ArduinoCommunication("192.168.1.101",3);
         arduinoNotif1.start();
 
-        arduinoNotif2 = new ArduinoCommunication("192.168.1.102",2);
+        arduinoNotif2 = new ArduinoCommunication("192.168.1.102",4);
         arduinoNotif2.start();
     }
 
