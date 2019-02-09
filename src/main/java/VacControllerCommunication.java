@@ -89,7 +89,7 @@ public class VacControllerCommunication  {
     }
 
     float getDataFromBuffer(byte[] buffer){
-        String bufferStr = buffer.toString();
+        String bufferStr = new String(buffer);
         int dataLength = Integer.parseInt(bufferStr.substring(8, 10));
 
         float data = Float.parseFloat(bufferStr.substring(10, 10 + dataLength));
