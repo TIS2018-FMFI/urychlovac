@@ -77,7 +77,7 @@ public class ArduinoCommunication extends Thread {
     public void sendMessage(int arduinoId, String msg) {
         buf = msg.getBytes();
         try {
-            InetAddress ip = InetAddress.getByName(/*TODO get ip from config*/"1.1.1.1");
+            InetAddress ip = InetAddress.getByName(Main.getConfig().getArduinoIpMap().get(arduinoId));
             DatagramPacket packet = new DatagramPacket(buf, buf.length, ip, PORT);
 
             socket.send(packet);
@@ -102,7 +102,7 @@ public class ArduinoCommunication extends Thread {
             if (lastUpdateTime.compareTo(currentTime - arduinoNotCommunicatingThreshold) < 0) {
                 okFlag = false;
                 System.out.println("ARDUINO: Arduino ID " + arduinoId + " is not communicating!");
-                //TODO send notification
+                Main.getNotificationManager().sendNotificationArduinoFault(arduinoId);
             }
         }
 
