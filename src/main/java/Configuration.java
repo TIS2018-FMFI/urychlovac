@@ -4,6 +4,7 @@ import net.consensys.cava.toml.TomlParseResult;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -15,6 +16,7 @@ import java.util.List;
 public class Configuration {
     private long loggingFrequency;
     private List<NotificationRule> notificationRules;
+    private HashMap<Integer, String> arduinoIpMap;
 
     public Configuration(String configFilePath) {
 
@@ -32,31 +34,47 @@ public class Configuration {
 
             ArrayList<NotificationRule> lst = new ArrayList<>();
 
-            String crisis_prefix = "crisis_situations";
+            String crisis_prefix = "crisis_situations.";
+            String name_suffix = ".name";
+            String level_suffix = ".level";
+            String condition_suffix = ".condition";
 
-            String highVoltageDoors_prefix = "high_voltage_doors_open";
+            String highVoltageDoors_string = "high_voltage_doors_open";
             lst.add(new NotificationRule(
-                    result.getString(crisis_prefix + "." + highVoltageDoors_prefix + ". name"),
-                    result.getLong(crisis_prefix + "." + highVoltageDoors_prefix + ". level"),
-                    result.getString(crisis_prefix + "." + highVoltageDoors_prefix + ". condition")
+                    result.getString(crisis_prefix + highVoltageDoors_string + name_suffix),
+                    result.getLong(crisis_prefix + highVoltageDoors_string + level_suffix),
+                    result.getString(crisis_prefix + highVoltageDoors_string + condition_suffix)
             ));
 
 
-            String gas_leak_prefix = "gas_leak";
+            String gas_leak_string = "gas_leak";
             lst.add(new NotificationRule(
-                    result.getString(crisis_prefix + "." + gas_leak_prefix + ". name"),
-                    result.getLong(crisis_prefix + "." + gas_leak_prefix + ". level"),
-                    result.getString(crisis_prefix + "." + gas_leak_prefix + ". condition")
+                    result.getString(crisis_prefix + gas_leak_string + name_suffix),
+                    result.getLong(crisis_prefix + gas_leak_string + level_suffix),
+                    result.getString(crisis_prefix + gas_leak_string + condition_suffix)
             ));
 
-            String cooling_fluid_low = "cooling_fluid_low";
+            String cooling_fluid_low_string = "cooling_fluid_low";
             lst.add(new NotificationRule(
-                    result.getString(crisis_prefix + "." + cooling_fluid_low + ". name"),
-                    result.getLong(crisis_prefix + "." + cooling_fluid_low + ". level"),
-                    result.getString(crisis_prefix + "." + cooling_fluid_low + ". condition")
+                    result.getString(crisis_prefix + cooling_fluid_low_string + name_suffix),
+                    result.getLong(crisis_prefix + cooling_fluid_low_string + level_suffix),
+                    result.getString(crisis_prefix + cooling_fluid_low_string + condition_suffix)
             ));
 
             setNotificationRules(lst);
+
+
+            // Mapa ip-ciek Arduin:
+            arduinoIpMap = new HashMap<>();
+            String arduinoIpAddress_prefix = "ip_addreeses.arduino.";
+            String ip_suffix = ".ip";
+
+            arduinoIpMap.put(0, result.getString(arduinoIpAddress_prefix + "0" + ip_suffix));
+            arduinoIpMap.put(1, result.getString(arduinoIpAddress_prefix + "1" + ip_suffix));
+            arduinoIpMap.put(2, result.getString(arduinoIpAddress_prefix + "2" + ip_suffix));
+            arduinoIpMap.put(3, result.getString(arduinoIpAddress_prefix + "3" + ip_suffix));
+            arduinoIpMap.put(4, result.getString(arduinoIpAddress_prefix + "4" + ip_suffix));
+
 
             // TEST:
             System.out.println("\n################ CONFIGURATION TEST: ################ \n");
@@ -84,5 +102,13 @@ public class Configuration {
 
     private void setNotificationRules(List<NotificationRule> notificationRules) {
         this.notificationRules = notificationRules;
+    }
+
+    public HashMap<Integer, String> getArduinoIpMap() {
+        return arduinoIpMap;
+    }
+
+    public void setArduinoIpMap(HashMap<Integer, String> arduinoIpMap) {
+        this.arduinoIpMap = arduinoIpMap;
     }
 }
