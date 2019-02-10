@@ -3,10 +3,7 @@ import java.net.*;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 
 /**
  * Arduino master class - used to communicate with Arduino, process and distribute its messages
@@ -29,7 +26,7 @@ public class ArduinoCommunication extends Thread {
 
     public ArduinoCommunication() {
         dataProcessor = new DataProcessor();
-        lastUpdates = new HashMap<>();
+        lastUpdates = new ConcurrentHashMap<>();
 
         try {
             socket = new DatagramSocket(PORT);
