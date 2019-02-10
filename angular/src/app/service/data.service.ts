@@ -11,7 +11,7 @@ export class DataService {
 
   constructor(private http: HttpClient) { }
   public get = (url: string, params?: HttpParams): Observable<any> => {
-    // console.log(this.apiUrl + url);
+    console.log(this.apiUrl + url);
     return this.http.get(this.apiUrl + url, { params }).pipe(catchError(this.handleError));
   };
 

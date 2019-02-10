@@ -13,7 +13,7 @@ window['Highcharts'] = Highcharts;
   styleUrls: ['./graphs.component.css']
 })
 export class GraphComponent implements OnInit{
-  @Input() graphType = '';
+  @Input() graphType;
   @Input() yAxisTitle = '';
   chart;
   periodIndex = 0;
@@ -25,9 +25,7 @@ export class GraphComponent implements OnInit{
   graphName: number = 0;
 
   constructor(private graphDataService: GraphDataService){
-    this.graphDataService.getGraphData('temperature/Acc/30mins').subscribe(
-      data => console.log("fok off", data)
-    );
+
     const clonedChart = _.cloneDeep(SCATTER_CHART);
 
     const chart = {
@@ -42,6 +40,10 @@ export class GraphComponent implements OnInit{
   ngOnInit(){
     this.chart.title.text = this.typeLists[this.graphType][this.graphName].name;
     this.chart.yAxis.title.text = this.yAxisTitle;
+
+    this.graphDataService.getGraphData(this.graphType + '/Acc/3hod').subscribe(
+      data => console.log(data)
+    );
   }
 
   changeInterval(){
@@ -49,7 +51,7 @@ export class GraphComponent implements OnInit{
     console.log(this.periodList[this.periodIndex]);
   }
 
-  changeGraphType(){
+  changeGraphType(){//TODO:
     console.log(this.typeLists[this.graphType][this.graphName]);
   }
   

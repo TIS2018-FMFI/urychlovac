@@ -28,7 +28,7 @@ export class StatusHeaderComponent implements OnInit {
     new Status("Lab electricity", true, this.off, this.successClass),
     new Status("Acc. high voltage", true, this.off, this.successClass), //modalne okno, ked sa pristroj vypne - oranzove - automaticky sa vypne, 
                                                                                       //ked napatie padne - treba ho vypnut manualne 
-    // new Status("aktuálnej hodnoty podtlaku a teploty v prehľadnej matici", false), TODO dafak?? :D
+
   ];
 
   constructor(private modalService: BsModalService) { }
