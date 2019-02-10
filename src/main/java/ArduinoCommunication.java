@@ -56,20 +56,20 @@ public class ArduinoCommunication extends Thread {
 
             try {
                 socket.receive(packet);
+
+                String received = new String(packet.getData(), 0, packet.getLength());
+                System.out.println("ARDUINO: Received packet: \"" + received + "\" (raw form).");
+
+                LabData receivedData = dataProcessor.processData(received);
+                if (receivedData != null) {
+                    lastUpdates.put(receivedData.getId(), System.currentTimeMillis());
+                    DataManager.getInstance().addData(receivedData);
+                }
             } catch (SocketTimeoutException e) {
                 System.out.println("ARDUINO: Timed out! " +
                         "Haven't received ANY packets in " + packetReceiveTimeout + " milliseconds.");
             } catch (IOException e) {
                 e.printStackTrace();
-            }
-
-            String received = new String(packet.getData(), 0, packet.getLength());
-            System.out.println("ARDUINO: Received packet: \"" + received + "\" (raw form).");
-
-            LabData receivedData = dataProcessor.processData(received);
-            if (receivedData != null) {
-                lastUpdates.put(receivedData.getId(), System.currentTimeMillis());
-                DataManager.getInstance().addData(receivedData);
             }
         }
     }
