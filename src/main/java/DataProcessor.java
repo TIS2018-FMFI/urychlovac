@@ -38,8 +38,8 @@ public class DataProcessor {
     //      1 = NOT OK
 
     public LabData processData(String input) {
-        if (input.charAt(1) == '0') {
-            int sensorId = (input.charAt(5) - '0') * 10 + input.charAt(5) - '0';
+        if (input.charAt(3) == '0') {
+            int sensorId = (input.charAt(5) - '0') * 10 + input.charAt(6) - '0';
 
             if (input.charAt(8) == '0') {//boolean status
                 if (input.charAt(10) == '0') {//value == false

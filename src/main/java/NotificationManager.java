@@ -12,15 +12,15 @@ public class NotificationManager{
     public NotificationManager(){};
 
     public void sendNotification(NotificationRule rule) {
-        Main.getArduinoNotif1().sendMessage(rule.getText());
-        Main.getArduinoNotif2().sendMessage(rule.getText());
+        Main.getArduinoCommunication().sendMessage(3, rule.getText());
+        Main.getArduinoCommunication().sendMessage(4, rule.getText());
         //System.out.println("NotifManag: "+rule.getText());
         //TODO dorobit frontend funkciu
     };
 
     public void sendNotificationArduinoFault(int arduinoId){
-        Main.getArduinoNotif1().sendMessage("CHYBA - Arduino s id "+String.valueOf(arduinoId)+" sa nehlasi");
-        Main.getArduinoNotif2().sendMessage("CHYBA - Arduino s id "+String.valueOf(arduinoId)+" sa nehlasi");
+        Main.getArduinoCommunication().sendMessage(3, "CHYBA - Arduino s id "+String.valueOf(arduinoId)+" sa nehlasi");
+        Main.getArduinoCommunication().sendMessage(4, "CHYBA - Arduino s id "+String.valueOf(arduinoId)+" sa nehlasi");
     }
 
 }

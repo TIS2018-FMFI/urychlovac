@@ -1,5 +1,9 @@
 import java.io.IOException;
 import java.net.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.concurrent.*;
 
 /**
  * Arduino master class - used to communicate with Arduino, process and distribute its messages
@@ -9,132 +13,99 @@ import java.net.*;
 
 
 public class ArduinoCommunication extends Thread {
-    // source of multicast receive code: https://www.baeldung.com/java-broadcast-multicast
     // source of unicast receive code: https://www.baeldung.com/udp-in-java
-
-    private int arduinoID = 0;
-
-    private String ipAddress;
 
     private DataProcessor dataProcessor;
     private byte[] buf = new byte[256];
-    private long lastUpdateTimestamp = System.currentTimeMillis();
-
     private DatagramSocket socket;
     private final static int PORT = 5000;
-    //private MulticastSocket socket = null;
+    private int packetReceiveTimeout;
+    private int arduinoNotCommunicatingThreshold = 60000;
 
-    public ArduinoCommunication(String ipAddress, int arduinoID) {
-        this.ipAddress = ipAddress;
-        this.arduinoID = arduinoID;
+    private Map<Integer, Long> lastUpdates;
+
+    public ArduinoCommunication() {
         dataProcessor = new DataProcessor();
+        lastUpdates = new ConcurrentHashMap<>();
+
         try {
             socket = new DatagramSocket(PORT);
-            socket.setSoTimeout((int)Main.getConfig().getLoggingFrequency()*2);
+            packetReceiveTimeout = (int)Main.getConfig().getLoggingFrequency()*2;
+            socket.setSoTimeout(packetReceiveTimeout);
         } catch (SocketException e) {
+            System.out.println("ARDUINO: Initialization of receiving socket failed!");
             e.printStackTrace();
         }
+
+        Runnable arduinoLastTimeActiveCheck = new Runnable() {
+            public void run() {
+                arduinosCommunicatingCheck();
+            }
+        };
+
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+        executor.scheduleAtFixedRate(arduinoLastTimeActiveCheck, 0,
+                arduinoNotCommunicatingThreshold, TimeUnit.MILLISECONDS);
     }
 
     @Override
     public void run() {
         while (true) {
             DatagramPacket packet = new DatagramPacket(buf, buf.length);
-            System.out.println("Waiting for packet...");
+            //System.out.println("ARDUINO: Waiting for packet...");
 
             try {
                 socket.receive(packet);
+
+                String received = new String(packet.getData(), 0, packet.getLength());
+                System.out.println("ARDUINO: Received packet: \"" + received + "\" (raw form).");
+
+                LabData receivedData = dataProcessor.processData(received);
+                if (receivedData != null) {
+                    lastUpdates.put(receivedData.getId(), System.currentTimeMillis());
+                    DataManager.getInstance().addData(receivedData);
+                }
             } catch (SocketTimeoutException e) {
-                //TODO send notification - he dead
-                System.out.println("Arduino with ID " + arduinoID + " timed out!");
+                System.out.println("ARDUINO: Timed out! " +
+                        "Haven't received ANY packets in " + packetReceiveTimeout + " milliseconds.");
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-            String received = new String(packet.getData(), 0, packet.getLength());
-            lastUpdateTimestamp = System.currentTimeMillis();
-            System.out.println("Received packet: " + received);
-
-            LabData receivedData = dataProcessor.processData(received);
-            if (receivedData != null) {
-                DataManager.getInstance().addData(receivedData);
-            }
         }
-
-        /*try {
-            socket = new MulticastSocket(MULTICAST_PORT);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        InetAddress group = null;
-        try {
-            group = InetAddress.getByName(ipAddress);
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            socket.joinGroup(group);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            socket.setSoTimeout((int)Main.getConfig().getLoggingFrequency()*2);
-        } catch (SocketException e) {
-            e.printStackTrace();
-        }
-
-        while (true) {
-            System.out.println("Waiting for UDP packet...");
-
-            DatagramPacket packet = new DatagramPacket(buf, buf.length);
-            try {
-                socket.receive(packet);
-            } catch (SocketTimeoutException e) {
-                //TODO send notification - he dead
-                System.out.println("Arduino with ID " + arduinoID + " timed out!");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            String received = new String(
-                    packet.getData(), 0, packet.getLength());
-            if ("end".equals(received)) {
-                break;
-            }
-
-            lastUpdateTimestamp = System.currentTimeMillis();
-
-            System.out.println(received);
-            LabData receivedData = dataProcessor.processData(received);
-            if (receivedData != null) {
-                DataManager.getInstance().addData(receivedData);
-            }
-        }
-
-        try {
-            socket.leaveGroup(group);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        socket.close();*/
     }
 
-    public void sendMessage(String msg) {
+    public void sendMessage(int arduinoId, String msg) {
         buf = msg.getBytes();
         try {
-            InetAddress ip = InetAddress.getByName(ipAddress);
+            InetAddress ip = InetAddress.getByName(Main.getConfig().getArduinoIpMap().get(arduinoId));
             DatagramPacket packet = new DatagramPacket(buf, buf.length, ip, PORT);
 
             socket.send(packet);
-            System.out.println("Message sent.");
+            System.out.println("ARDUINO: SMS notification request packet sent!");
         } catch (UnknownHostException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private boolean arduinosCommunicatingCheck() {
+        Long currentTime = System.currentTimeMillis();
+        Iterator it = lastUpdates.entrySet().iterator();
+        boolean okFlag = true;
+
+        while (it.hasNext()) {
+            Map.Entry lastUpdate = (Map.Entry)it.next();
+            Long lastUpdateTime = (Long) lastUpdate.getValue();
+            Integer arduinoId = (Integer) lastUpdate.getKey();
+
+            if (lastUpdateTime.compareTo(currentTime - arduinoNotCommunicatingThreshold) < 0) {
+                okFlag = false;
+                System.out.println("ARDUINO: Arduino ID " + arduinoId + " is not communicating!");
+                Main.getNotificationManager().sendNotificationArduinoFault(arduinoId);
+            }
+        }
+
+        return okFlag;
     }
 }
