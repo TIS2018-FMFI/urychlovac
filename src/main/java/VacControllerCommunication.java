@@ -74,12 +74,15 @@ public class VacControllerCommunication  {
         System.out.println("########## end of VacuumController Test: ##########\n");
 
 
-        // konfiguruj port
-        comPort = ports[0];
-        comPort.openPort();
+        if (ports.length >= 1){
+            // konfiguruj port
+            comPort = ports[0];
+            comPort.openPort();
 
-        PacketListener listener = new PacketListener();
-        comPort.addDataListener(listener);
+            PacketListener listener = new PacketListener();
+            comPort.addDataListener(listener);
+        }
+
 
 //        comPort.removeDataListener(); // cannot do now
 //        comPort.closePort(); // We can not close port now.
