@@ -1,10 +1,9 @@
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -38,42 +37,96 @@ public class DataManager {
     private DataManager() {
     }
 
+    public void initFiles(){
+        for(Integer key : SENSORS.keySet()){
+            File file = new File(ROOT_PATH+SENSORS.get(key)+".txt");
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public void addData(LabData data){
         long freq = Main.getConfig().getLoggingFrequency();
-        if(checkData(data)) {
+        checkData(data);
             String fileName = SENSORS.get(data.getId());
+
             if(timePassed(data.getId(),freq)) {
                 String writeData = convertToCSV(data);
                 if (data instanceof MeasuredData) {
 
-                    saveDataToFile(ROOT_PATH+fileName+".txt", writeData);
+                    saveDataToFile(ROOT_PATH+fileName, writeData);
                 }
                 if (data instanceof BinaryStatus) {
-                    saveDataToFile(ROOT_PATH+fileName+".txt",writeData);
+                    //System.out.println("ahoj");
+                    saveDataToFile(ROOT_PATH+fileName,writeData);
                 }
             }
-        } else{
-            //sendNotification();
-        }
+
     }
 
     public boolean timePassed(int sensorId, long duration){
-        List<String> lines = Collections.emptyList();
+
+        //String aktdir = System.getProperty("user.dir");
+        //System.out.println(ROOT_PATH+SENSORS.get(sensorId)+".txt");
+
+       // File reqFile= new File(aktdir,ROOT_PATH+SENSORS.get(sensorId)+".txt");
+
+
+        //File file = new File("C:\\Users\\micha\\OneDrive\\Matfyz\\3.rocnik\\TIS\\urychlovac\\DHT22_temperature.txt");
+        String result="";
+        File file = new File(ROOT_PATH+SENSORS.get(sensorId)+".txt");
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            String st;
+            while ((st = br.readLine()) != null){
+                //System.out.println(st);
+                result=st;
+            }
+            if (result==""){
+                return true;
+            } else{
+                String[] line = result.split(CSV_SEPARATOR);
+                Date date =new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy").parse(line[1]);
+                //System.out.println(date.toString());
+                //System.out.println(Boolean.valueOf(new Date().getTime()-date.getTime()>=duration));
+                if (Integer.parseInt(line[0])==sensorId && new Date().getTime()-date.getTime()>=duration){
+                    return true;
+                }
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+       /* List<String> lines = new ArrayList<String>();
         try
         {
-            lines = Files.readAllLines(Paths.get(ROOT_PATH+SENSORS.get(sensorId)+".txt"), StandardCharsets.UTF_8);
+            System.out.println(Paths.get(ROOT_PATH+SENSORS.get(sensorId)+".txt"));
+            lines = Files.readAllLines(Paths.get(), StandardCharsets.UTF_8);
+            System.out.println("kokos");
+            System.out.println(lines.size());
         }
         catch (IOException e)
         {
             e.printStackTrace();
         }
-        for (int i= lines.size()-1;i>=0;i--){
-            String[] line = lines.get(i).split(CSV_SEPARATOR);
-            Date date = new Date(line[1]);
-            if (Integer.parseInt(line[0])==sensorId && new Date().getTime()-date.getTime()>=duration){
-                return true;
+
+        if (lines.size()==0){
+            //System.out.println("ahoj");
+            return true;
+        } else{
+            for (int i= lines.size()-1;i>=0;i--){
+                String[] line = lines.get(i).split(CSV_SEPARATOR);
+                Date date = new Date(line[1]);
+                System.out.println(date.toString());
+                if (Integer.parseInt(line[0])==sensorId && new Date().getTime()-date.getTime()>=duration){
+                    System.out.println(new Date().getTime()-date.getTime()>=duration);
+                    return true;
+                }
             }
-        }
+        }*/
         return false;
     }
 
@@ -89,9 +142,11 @@ public class DataManager {
     }
 
     public boolean checkData(LabData data){
-        List<NotificationRule> rules = Main.getConfig().getNotificationRules();
-        for (NotificationRule rule : rules) {
+        //List<NotificationRule> rules = Main.getConfig().getNotificationRules();
+        for (NotificationRule rule : Main.getConfig().getNotificationRules()) {
+            //System.out.println(rule.getText());
             String[] control = rule.getRule().split("&");
+            //System.out.println(control[0]);
             for (String condition : control){
                 if(data instanceof BinaryStatus){
                     if(data.getId() == Integer.parseInt(condition) && ((BinaryStatus) data).isValue() || data.getId() != Integer.parseInt(condition)){
@@ -100,7 +155,9 @@ public class DataManager {
 
                     //TODO poslat notifikaciu s notif rule
                     else{
+                        //System.out.println(rule.getText());
                         Main.getNotificationManager().sendNotification(rule);
+
                         return false;
                     }
                 }
@@ -121,6 +178,46 @@ public class DataManager {
     }
 
     public List<LabData> loadDataFromFile(String fileName) {
+        //String result="";
+        List<LabData> result = new ArrayList<>();
+        File file = new File(ROOT_PATH+fileName);
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            String st;
+            while ((st = br.readLine()) != null){
+                //System.out.println(st);
+
+                String[] data = st.split(CSV_SEPARATOR);
+                int sensorId = Integer.parseInt(data[0]);
+                //Date time = new Date(data[1]);
+
+                Date time =new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy").parse(data[1]);
+                if(data[2].equals("true") || data[2].equals("false")){
+                    result.add(new BinaryStatus(sensorId, time, Boolean.valueOf(data[2])));
+                } else {
+                    result.add(new MeasuredData(sensorId, time, Float.parseFloat(data[2])));
+                }
+                //result=st;
+            }
+           /* if (result==""){
+                return true;
+            } else{
+                String[] line = result.split(CSV_SEPARATOR);
+                Date date =new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy").parse(line[1]);
+                //System.out.println(date.toString());
+                //System.out.println(Boolean.valueOf(new Date().getTime()-date.getTime()>=duration));
+                if (Integer.parseInt(line[0])==sensorId && new Date().getTime()-date.getTime()>=duration){
+                    return true;
+                }
+            }*/
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+
+
+
+       /*
         List<LabData> result = Collections.emptyList();
         List<String> lines = Collections.emptyList();
         try
@@ -141,12 +238,13 @@ public class DataManager {
                 result.add(new MeasuredData(sensorId, time, Float.parseFloat(data[2])));
             }
 
-        }
+        }*/
         return result;
     }
     public List<LabData> loadDataSensorTimePeriod(int sensorId, Date fromTime, Date toTime) {
-        List<LabData> result = loadDataFromFile(ROOT_PATH+SENSORS.get(sensorId)+".txt");
-        for (LabData data : result){
+        List<LabData> lines = loadDataFromFile(ROOT_PATH+SENSORS.get(sensorId)+".txt");
+        List<LabData> result = new ArrayList<>();
+        for (LabData data : lines){
             if (data.getId()==sensorId && (data.getTimestamp().after(fromTime) && data.getTimestamp().before(toTime))){
                 result.add(data);
             }
@@ -177,6 +275,21 @@ public class DataManager {
     }
 
     public List<String> getListOfLogs(String fileName) {
+        List<String> result = new ArrayList<>();
+        File file = new File(ROOT_PATH+fileName);
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            String st;
+            while ((st = br.readLine()) != null){
+                //System.out.println(st);
+                result.add(st);
+            }
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+        /*
         List<String> lines = Collections.emptyList();
         try
         {
@@ -185,7 +298,7 @@ public class DataManager {
         catch (IOException e)
         {
             e.printStackTrace();
-        }
-        return lines;
+        }*/
+        return result;
     }
 }
