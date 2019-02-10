@@ -2,10 +2,10 @@
 #include <UIPEthernet.h>
 
 // CONFIG:
-const int ARDUINO_ID = 3; // ID of the particular arduino you're flashing this on - TWO DIFFERENT ARDUINOS SHOULDN'T HAVE THE SAME ID
-const long PHONE_NUM_1 = 950626299; // add as many phone numbers as needed - don't forget to add duplicate and edit rows where they're used too
-const int POWER_OUTAGE_PIN = 2; // digital pin to which power outage detector is connected
-const int OK_MESSAGE_FREQUENCY = 10000; // how often (in milliseconds) should arduino send message to backend about its status
+const int ARDUINO_ID = 3;                 // ID of the particular arduino you're flashing this on - TWO DIFFERENT ARDUINOS SHOULDN'T HAVE THE SAME ID
+const long PHONE_NUM_1 = 950626299;       // add as many phone numbers as needed - don't forget to add duplicate and edit rows where they're used too
+const int POWER_OUTAGE_PIN = 2;           // digital pin to which power outage detector is connected
+const int OK_MESSAGE_FREQUENCY = 10000;   // how often (in milliseconds) should arduino send message to backend about its status
 
 // Configure software serial port
 SoftwareSerial SIM900(7, 8);
@@ -29,7 +29,7 @@ void setup() {
   gsmCheck();
 
   // Ethernet init
-  uint8_t mac[6] = { 0x10, 0x20, 0x30, 0x40, 0x50, 0x60 };
+  byte mac[] = {0x41, 0x52, 0x44, 0x55, 0x4E, 0xA0 + ARDUINO_ID}; // arduino id is coded into mac, so it's unique and identifiable
   Ethernet.begin(mac, IPAddress(147, 213, 232, 143));
   udp.begin(5000);
 }
