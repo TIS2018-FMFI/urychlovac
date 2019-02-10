@@ -9,9 +9,12 @@ import java.util.List;
 
 public class NotificationManager{
 
+    public NotificationManager(){};
+
     public void sendNotification(NotificationRule rule) {
         Main.getArduinoNotif1().sendMessage(rule.getText());
         Main.getArduinoNotif2().sendMessage(rule.getText());
+        //System.out.println("NotifManag: "+rule.getText());
         //TODO dorobit frontend funkciu
     };
 
