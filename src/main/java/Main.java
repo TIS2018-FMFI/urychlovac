@@ -22,6 +22,7 @@ public class Main {
     private static VacControllerCommunication vacControllerCommunication;
 
     public Main() {
+        System.out.println("\"################# GHKP URYCHLOVAC #################");
         config = new Configuration("config.toml");
 
         arduinoData1 = new ArduinoCommunication("147.213.232.140",0);
