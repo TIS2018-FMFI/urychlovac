@@ -23,6 +23,7 @@ public class Main {
     private static VacControllerCommunication vacControllerCommunication;
 
     public Main() {
+        System.out.println("\"################# GHKP URYCHLOVAC #################");
         config = new Configuration("config.toml");
         DataManager DM = DataManager.getInstance();
         DM.initFiles();

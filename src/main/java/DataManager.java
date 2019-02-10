@@ -11,7 +11,8 @@ import java.util.*;
 public class DataManager {
     private static DataManager ourInstance = new DataManager();
     private static final String CSV_SEPARATOR = ";";
-    private static String ROOT_PATH="";
+    private static String ROOT_PATH="/home/piestany/BACKEND_TEST/";
+
     private static final Map<Integer, String> SENSORS;
     static {
         Map<Integer, String> aMap = new HashMap<>();
@@ -46,11 +47,9 @@ public class DataManager {
         long freq = Main.getConfig().getLoggingFrequency();
         checkData(data);
             String fileName = SENSORS.get(data.getId());
-
             if(timePassed(data.getId(),freq)) {
                 String writeData = convertToCSV(data);
                 if (data instanceof MeasuredData) {
-
                     saveDataToFile(ROOT_PATH+fileName, writeData);
                 }
                 if (data instanceof BinaryStatus) {
@@ -144,6 +143,17 @@ public class DataManager {
             }
         } catch (Exception e){
             e.printStackTrace();
+        }
+        for (String line : lines){
+            String[] data = line.split(CSV_SEPARATOR);
+            int sensorId = Integer.parseInt(data[0]);
+            Date time = new Date(data[1]);
+            if(data[2].equals("true") || data[2].equals("false")){
+                result.add(new BinaryStatus(sensorId, time, Boolean.valueOf(data[2])));
+            } else {
+                result.add(new MeasuredData(sensorId, time, Float.parseFloat(data[2])));
+            }
+
         }
         return result;
     }
