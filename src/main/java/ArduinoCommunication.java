@@ -101,7 +101,7 @@ public class ArduinoCommunication extends Thread {
             if (lastUpdateTime.compareTo(currentTime - arduinoNotCommunicatingThreshold) < 0) {
                 okFlag = false;
                 System.out.println("ARDUINO: Arduino ID " + arduinoId + " is not communicating!");
-                Main.getNotificationManager().sendNotificationArduinoFault(arduinoId);
+                Main.getNotificationManager().sendNotificationArduinoFault(arduinoId, "Arduino sa nehlasi");
                 dead.add(arduinoId);
             }
         }

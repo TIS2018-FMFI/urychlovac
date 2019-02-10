@@ -74,7 +74,7 @@ public class DataProcessor {
             }
         } else if (input.charAt(3) == '1') {
             if (input.charAt(5) == '1') {
-                Main.getNotificationManager().sendNotificationArduinoFault(input.charAt(1) - '0');
+                Main.getNotificationManager().sendNotificationArduinoFault(input.charAt(1) - '0', "GSM modul hlasi chybu");
                 System.out.println("ARDUINO: Notification Arduino with ID " + (input.charAt(1) - '0') + " has an issue");
             }
         }
