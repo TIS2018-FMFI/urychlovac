@@ -74,8 +74,8 @@ public class DataProcessor {
             }
         } else if (input.charAt(3) == '1') {
             if (input.charAt(5) == '1') {
-                //TODO send notification
-                System.out.println("Arduino with ID " + (input.charAt(1) - '0') + "has an issue");
+                Main.getNotificationManager().sendNotificationArduinoFault(input.charAt(1) - '0');
+                System.out.println("ARDUINO: Notification Arduino with ID " + (input.charAt(1) - '0') + " has an issue");
             }
         }
 
