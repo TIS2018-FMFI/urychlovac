@@ -10,20 +10,39 @@ logging_frequency = 1000    # 1000ms = 1s
 
 [crisis_situations]
 
-  [crisis_situations.high_voltage_doors_open] # nastava ked je spustene vysoke napatie a zaroven su otvorene dvere
-  name = "Otvorené dvere a Vysoké napätie!"
-  level = 1
-  condition = "2&3"     # 2 = senzor otvorenych dveri; 3 = senzor vysokeho napatia
+    [crisis_situations.high_voltage_doors_open] # nastava ked je spustene vysoke napatie a zaroven su otvorene dvere
+    name = "Otvorené dvere a Vysoké napätie!"
+    level = 1
+    condition = "2&3"     # 2 = senzor otvorenych dveri; 3 = senzor vysokeho napatia
 
-  [crisis_situations.gas_leak]
-  name = "Únik izolačného plynu!"
-  level = 2
-  condition = "4"
+    [crisis_situations.gas_leak]
+    name = "Únik izolačného plynu!"
+    level = 2
+    condition = "4"
 
-  [crisis_situations.cooling_fluid_low]
-  name = "Nízka hladina chladiacej kvapaliny!"
-  level = 1
-  condition = "5"
+    [crisis_situations.cooling_fluid_low]
+    name = "Nízka hladina chladiacej kvapaliny!"
+    level = 1
+    condition = "5"
+
+[ip_addreses]
+    [ip_addresees.arduino]
+
+        [ip_addreeses.arduino.0]
+        ip = "147.213.232.140"
+
+        [ip_addreeses.arduino.1]
+        ip = "147.213.232.141"
+
+        [ip_addreeses.arduino.2]
+        ip = "147.213.232.142"
+
+        [ip_addreeses.arduino.3]
+        ip = "147.213.232.143"
+
+        [ip_addreeses.arduino.4]
+        ip = "147.213.232.144"
+
 
 
 
