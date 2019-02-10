@@ -60,13 +60,22 @@ public class VacControllerCommunication  {
 
     // CONSTRUCTOR //
     public VacControllerCommunication() {
-        if (SerialPort.getCommPorts().length > 1) {
+        SerialPort[] ports = SerialPort.getCommPorts();
+
+        System.out.println("\n\n########## VacuumController Test: ##########");
+        if (ports.length < 1) {
+            System.out.println("VacuumController: ERROR: no serial ports! Please enter portDescriptor as argument to getComports().");
+        } else if (ports.length == 1){
+            System.out.println("VacuumController: OK we have 1 port available.");
+            System.out.println("port description: " + ports[0].getPortDescription());
+        } else if (ports.length > 1) {
             System.out.println("VacuumController: WARNING we have more than one serial ports! Please enter portDescriptor as argument to getComports().");
         }
+        System.out.println("########## end of VacuumController Test: ##########\n");
 
 
         // konfiguruj port
-        comPort = SerialPort.getCommPorts()[0];
+        comPort = ports[0];
         comPort.openPort();
 
         PacketListener listener = new PacketListener();

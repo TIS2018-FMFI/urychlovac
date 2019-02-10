@@ -16,7 +16,7 @@ import java.util.*;
 public class DataManager {
     private static DataManager ourInstance = new DataManager();
     private static final String CSV_SEPARATOR = ";";
-    private static String ROOT_PATH="";
+    private static String ROOT_PATH="/home/piestany/BACKEND_TEST/";
     private static final Map<Integer, String> SENSORS;
     static {
         Map<Integer, String> aMap = new HashMap<>();

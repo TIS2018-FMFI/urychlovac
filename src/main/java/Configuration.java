@@ -59,10 +59,10 @@ public class Configuration {
             setNotificationRules(lst);
 
             // TEST:
-            System.out.println("################ CONFIGURATION TEST: ################ \n");
+            System.out.println("\n################ CONFIGURATION TEST: ################ \n");
             System.out.println("Logging frequency: " + getLoggingFrequency());
-            System.out.println("List of notification rules: " + getNotificationRules());
-            System.out.println("\n################ End of CONFIGURATION TEST ################");
+            System.out.println("Notification rules (count): " + getNotificationRules().size());
+            System.out.println("\n############# End of CONFIGURATION TEST #############");
         } else {
             System.err.println("ERROR! Configuration: result is null!");
         }
