@@ -1,8 +1,6 @@
 import java.io.IOException;
 import java.net.*;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.*;
 
 /**
@@ -93,6 +91,7 @@ public class ArduinoCommunication extends Thread {
         Long currentTime = System.currentTimeMillis();
         Iterator it = lastUpdates.entrySet().iterator();
         boolean okFlag = true;
+        Set<Integer> dead = new HashSet<>();
 
         while (it.hasNext()) {
             Map.Entry lastUpdate = (Map.Entry)it.next();
@@ -103,7 +102,13 @@ public class ArduinoCommunication extends Thread {
                 okFlag = false;
                 System.out.println("ARDUINO: Arduino ID " + arduinoId + " is not communicating!");
                 Main.getNotificationManager().sendNotificationArduinoFault(arduinoId);
+                dead.add(arduinoId);
             }
+        }
+
+        // Ensures that notification is only sent once, until arduino reconnects
+        for (Integer arduinoId : dead) {
+            lastUpdates.put(arduinoId, Long.MAX_VALUE);
         }
 
         return okFlag;
