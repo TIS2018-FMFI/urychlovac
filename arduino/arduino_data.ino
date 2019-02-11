@@ -6,7 +6,7 @@
 
 /************************CONFIG**************************************************/
 int ARDUINO_ID = 0;
-const int WAIT_PERIOD = 500;
+const int WAIT_PERIOD = 200;
 /************************DHT22 sensor********************************************/
 //define DHT22
 const byte DHTPIN = 7;     // what pin is the DHT22 sensor connected to
@@ -35,7 +35,7 @@ char data_header[16];
 
 // Ethernet variables
 byte mac[] = {0x41, 0x52, 0x44, 0x55, 0x4E, 0xA0 + ARDUINO_ID}; // arduino id is coded into mac, so it's unique and identifiable
-IPAddress ip(147, 213, 232, 141);
+IPAddress ip(147, 213, 232, 140 + ARDUINO_ID);
 IPAddress gateway(147, 213, 232, 1);
 IPAddress subnet(255, 255, 255, 0);
 IPAddress nameserver(147, 213, 1, 1);

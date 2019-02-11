@@ -4,13 +4,13 @@
 
 /************************CONFIG**************************************************/
 int ARDUINO_ID = 1;
-const int WAIT_PERIOD = 500;
+const int WAIT_PERIOD = 200;
 /************************DHT22 sensor********************************************/
 //define DHT22
-const byte DHTPIN_1 6     // what pin is the 1st sensor connected to
-const byte DHTPIN_2 7     // what pin is the 2nd sensor connected to
-const byte DHTPIN_3 8     // what pin is the 3rd sensor connected to
-const byte DHTPIN_4 9     // what pin is the 4th sensor connected to
+const byte DHTPIN_1 = 6;     // what pin is the 1st sensor connected to
+const byte DHTPIN_2 = 7;     // what pin is the 2nd sensor connected to
+const byte DHTPIN_3 = 8;     // what pin is the 3rd sensor connected to
+const byte DHTPIN_4 = 9;     // what pin is the 4th sensor connected to
 #define DHTTYPE DHT22   // DHT 22  (AM2302)
 
 DHT dht1(DHTPIN_1, DHTTYPE);
@@ -24,7 +24,7 @@ char data_header[16];
 
 // Ethernet variables
 byte mac[] = {0x41, 0x52, 0x44, 0x55, 0x4E, 0xA0 + ARDUINO_ID}; // arduino id is coded into mac, so it's unique and identifiable
-IPAddress ip(147, 213, 232, 141);
+IPAddress ip(147, 213, 232, 140 + ARDUINO_ID);
 IPAddress gateway(147, 213, 232, 1);
 IPAddress subnet(255, 255, 255,0);
 IPAddress nameserver(147, 213, 1, 1);

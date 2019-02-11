@@ -19,8 +19,10 @@ boolean errMessageSent = false;
 boolean powerOutageMessageSent = false;
 
 void setup() {
+  /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
   // Serial init for debugging
   Serial.begin(19200);
+  /*!!!DOUBLE CHECK YOUR SERIAL MONITOR BAUD IS SET TO 19200 - NECESSITY BECAUSE OF THE SIM900 MODULE!!!*/
   
   // GSM init for SMS notifications
   SIM900.begin(19200);
@@ -30,7 +32,7 @@ void setup() {
 
   // Ethernet init
   byte mac[] = {0x41, 0x52, 0x44, 0x55, 0x4E, 0xA0 + ARDUINO_ID}; // arduino id is coded into mac, so it's unique and identifiable
-  Ethernet.begin(mac, IPAddress(147, 213, 232, 143));
+  Ethernet.begin(mac, IPAddress(147, 213, 232, 140 + ARDUINO_ID));
   udp.begin(5000);
 }
 
