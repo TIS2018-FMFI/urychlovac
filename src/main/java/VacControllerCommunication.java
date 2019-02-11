@@ -62,7 +62,7 @@ public class VacControllerCommunication  {
     public VacControllerCommunication() {
         SerialPort[] ports = SerialPort.getCommPorts();
 
-        System.out.println("\n\n########## VacuumController Test: ##########");
+        System.out.println("\n\n########## VacuumController Test1: ##########");
         if (ports.length < 1) {
             System.out.println("VacuumController: ERROR: no serial ports! Please enter portDescriptor as argument to getComports().");
         } else if (ports.length == 1){
@@ -71,12 +71,14 @@ public class VacControllerCommunication  {
         } else if (ports.length > 1) {
             System.out.println("VacuumController: WARNING we have more than one serial ports! Please enter portDescriptor as argument to getComports().");
         }
-        System.out.println("########## end of VacuumController Test: ##########\n\n");
+        System.out.println("########## end of VacuumController Test1: ##########\n\n");
 
 
+        System.out.println("\n\n########## VacuumController Test 2: ##########");
         /////////////// TEST ///////////////
         SerialPort NEW_PORT = SerialPort.getCommPort("/dev/pts/4");
         System.out.println("NEW PORT: port description: " + NEW_PORT.getPortDescription() + "\n");
+        System.out.println("########## end of VacuumController Test 2: ##########\n\n");
 
 //        comPort = ports[0];
         NEW_PORT.openPort();
