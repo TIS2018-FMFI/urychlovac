@@ -34,7 +34,7 @@ public class DataManager {
 
     public void initFiles(){
         for(Integer key : SENSORS.keySet()){
-            File file = new File(ROOT_PATH+SENSORS.get(key)+".txt");
+            File file = new File(ROOT_PATH+SENSORS.get(key)+".csv");
             try {
                 file.createNewFile();
             } catch (IOException e) {
@@ -50,17 +50,17 @@ public class DataManager {
             if(timePassed(data.getId(),freq)) {
                 String writeData = convertToCSV(data);
                 if (data instanceof MeasuredData) {
-                    saveDataToFile(ROOT_PATH+fileName, writeData);
+                    saveDataToFile(fileName, writeData);
                 }
                 if (data instanceof BinaryStatus) {
-                    saveDataToFile(ROOT_PATH+fileName,writeData);
+                    saveDataToFile(fileName,writeData);
                 }
             }
     }
 
     public boolean timePassed(int sensorId, long duration){
         String result="";
-        File file = new File(ROOT_PATH+SENSORS.get(sensorId)+".txt");
+        File file = new File(ROOT_PATH+SENSORS.get(sensorId)+".csv");
         try {
             BufferedReader br = new BufferedReader(new FileReader(file));
             String st;
@@ -116,7 +116,7 @@ public class DataManager {
     }
 
     public void saveDataToFile(String fileName, String data) {
-        try(FileWriter fw = new FileWriter(ROOT_PATH+fileName+".txt", true);
+        try(FileWriter fw = new FileWriter(ROOT_PATH+fileName+".csv", true);
             BufferedWriter bw = new BufferedWriter(fw);
             PrintWriter out = new PrintWriter(bw)) {
             out.println(data);
@@ -148,7 +148,7 @@ public class DataManager {
     }
 
     public List<LabData> loadDataSensorTimePeriod(int sensorId, Date fromTime, Date toTime) {
-        List<LabData> lines = loadDataFromFile(ROOT_PATH+SENSORS.get(sensorId)+".txt");
+        List<LabData> lines = loadDataFromFile(ROOT_PATH+SENSORS.get(sensorId)+".csv");
         List<LabData> result = new ArrayList<>();
         for (LabData data : lines){
             if (data.getId()==sensorId && (data.getTimestamp().after(fromTime) && data.getTimestamp().before(toTime))){
