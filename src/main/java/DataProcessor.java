@@ -56,7 +56,11 @@ public class DataProcessor {
                 int digit = 10;
 
                 while (true) {
-                    if (i >= input.length() || input.charAt(i) < '0' || input.charAt(i) > '9') {
+                    if (i >= input.length()) {
+                        break;
+                    }
+
+                    if (input.charAt(i) != '.' && (input.charAt(i) < '0' || input.charAt(i) > '9')) {
                         break;
                     } else if (input.charAt(i) == '.') {
                         separator = true;
