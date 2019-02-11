@@ -18,9 +18,11 @@ public class NotificationManager{
         //TODO dorobit frontend funkciu
     };
 
-    public void sendNotificationArduinoFault(int arduinoId){
-        Main.getArduinoCommunication().sendMessage(3, "CHYBA - Arduino s id "+String.valueOf(arduinoId)+" sa nehlasi");
-        Main.getArduinoCommunication().sendMessage(4, "CHYBA - Arduino s id "+String.valueOf(arduinoId)+" sa nehlasi");
+    public void sendNotificationArduinoFault(int arduinoId, String message){
+        Main.getArduinoCommunication().sendMessage(3, "CHYBA - Arduino id "+String.valueOf(arduinoId)+" - " + message);
+        Main.getArduinoCommunication().sendMessage(4, "CHYBA - Arduino id "+String.valueOf(arduinoId)+" - " + message);
+
+        //TODO dorobit frontend funkciu
     }
 
 }

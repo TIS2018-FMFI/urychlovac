@@ -3,14 +3,14 @@
 #include <EthernetUdp.h>
 
 /************************CONFIG**************************************************/
-int wait_period = 500;
-int arduino_id = 1;
+int ARDUINO_ID = 1;
+const int WAIT_PERIOD = 500;
 /************************DHT22 sensor********************************************/
 //define DHT22
-#define DHTPIN_1 8     // what pin we're connected to
-#define DHTPIN_2 9     // what pin we're connected to
-#define DHTPIN_3 7     // what pin we're connected to
-#define DHTPIN_4 6     // what pin we're connected to
+const byte DHTPIN_1 6     // what pin is the 1st sensor connected to
+const byte DHTPIN_2 7     // what pin is the 2nd sensor connected to
+const byte DHTPIN_3 8     // what pin is the 3rd sensor connected to
+const byte DHTPIN_4 9     // what pin is the 4th sensor connected to
 #define DHTTYPE DHT22   // DHT 22  (AM2302)
 
 DHT dht1(DHTPIN_1, DHTTYPE);
@@ -19,32 +19,36 @@ DHT dht3(DHTPIN_3, DHTTYPE);
 DHT dht4(DHTPIN_4, DHTTYPE);
 /*******************************************************************************/
 
+// Helper variables
 char data_header[16];
 
-byte mac[] = {0xAA, 0xAA, 0xAE, 0xAA, 0xAA, 0xAA};
+// Ethernet variables
+byte mac[] = {0x41, 0x52, 0x44, 0x55, 0x4E, 0xA0 + ARDUINO_ID}; // arduino id is coded into mac, so it's unique and identifiable
 IPAddress ip(147, 213, 232, 141);
 IPAddress gateway(147, 213, 232, 1);
 IPAddress subnet(255, 255, 255,0);
 IPAddress nameserver(147, 213, 1, 1);
 unsigned int localPort = 5000;
-
 IPAddress remoteIP(147, 213, 232, 125);
 unsigned int remotePort = 5000;
-
 EthernetUDP Udp;
 
 void setup() {
+  //Serial for debugging
   Serial.begin(9600);
-  Serial.println("Initializing....");
+  Serial.println("Initializing...");
 
+  // Ethernet init
   Ethernet.begin(mac, ip, nameserver, gateway, subnet);
   Udp.begin(localPort);
 
+  // Sensors init
   dht1.begin();
   dht2.begin();
+  dht3.begin();
+  dht4.begin();
 
-  Serial.println("setup finished!");
-  Serial.println(" ");
+  Serial.println("Init finished!");
 }
 
 void loop() {
@@ -52,6 +56,8 @@ void loop() {
   double hum;
 
   /********DHT 1********/
+  Serial.println("********DHT 1********");
+  
   temp = dht1.readTemperature();
   if( !is_NaN(temp)) {
     set_header(1,0,1);
@@ -68,6 +74,8 @@ void loop() {
   /*********************/
 
   /********DHT 2********/
+  Serial.println("********DHT 2********");
+  
   temp = dht2.readTemperature();
   if( !is_NaN(temp)) {
     set_header(1,2,1);
@@ -84,6 +92,8 @@ void loop() {
   /*********************/
 
   /********DHT 3********/
+  Serial.println("********DHT 3********");
+  
   temp = dht3.readTemperature();
   if( !is_NaN(temp)) {
     set_header(1,4,1);
@@ -100,6 +110,8 @@ void loop() {
   /*********************/
 
   /********DHT 4********/
+  Serial.println("********DHT 4********");
+  
   temp = dht4.readTemperature();
   if( !is_NaN(temp)) {
     set_header(1,6,1);
@@ -115,7 +127,8 @@ void loop() {
   }
   /*********************/
 
-  delay(wait_period);
+  Serial.println("*********************");
+  delay(WAIT_PERIOD); // wait to prevent unnecessary network load
 }
 
 int sendData(char* header, double value) {

@@ -14,6 +14,7 @@ public class DataManager {
     private static String ROOT_PATH="/home/piestany/BACKEND_TEST/";
 
     private static final Map<Integer, String> SENSORS;
+    //TODO: Michal Kovac - update map
     static {
         Map<Integer, String> aMap = new HashMap<>();
         aMap.put(0, "DHT22_temperature"); //teplota measured
