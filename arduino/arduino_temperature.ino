@@ -60,14 +60,14 @@ void loop() {
   
   temp = dht1.readTemperature();
   if( !is_NaN(temp)) {
-    set_header(1,0,1);
+    set_header(0,1);
     sendData(data_header, temp);
     Serial.print("Temperature "); Serial.println(temp);
   }
   
   hum = dht1.readHumidity();
   if( !is_NaN(hum)) {
-    set_header(1,1,1);
+    set_header(1,1);
     sendData(data_header, hum);
     Serial.print("Humidity "); Serial.println(hum);
   }
@@ -78,14 +78,14 @@ void loop() {
   
   temp = dht2.readTemperature();
   if( !is_NaN(temp)) {
-    set_header(1,2,1);
+    set_header(2,1);
     sendData(data_header, temp);
     Serial.print("Temperature "); Serial.println(temp);
   }
   
   hum = dht2.readHumidity();
   if( !is_NaN(hum)) {
-    set_header(1,3,1);
+    set_header(3,1);
     sendData(data_header, hum);
     Serial.print("Humidity "); Serial.println(hum);
   }
@@ -96,14 +96,14 @@ void loop() {
   
   temp = dht3.readTemperature();
   if( !is_NaN(temp)) {
-    set_header(1,4,1);
+    set_header(4,1);
     sendData(data_header, temp);
     Serial.print("Temperature "); Serial.println(temp);
   }
   
   hum = dht3.readHumidity();
   if( !is_NaN(hum)) {
-    set_header(1,5,1);
+    set_header(5,1);
     sendData(data_header, hum);
     Serial.print("Humidity "); Serial.println(hum);
   }
@@ -114,14 +114,14 @@ void loop() {
   
   temp = dht4.readTemperature();
   if( !is_NaN(temp)) {
-    set_header(1,6,1);
+    set_header(6,1);
     sendData(data_header, temp);
     Serial.print("Temperature "); Serial.println(temp);
   }
   
   hum = dht4.readHumidity();
   if( !is_NaN(hum)) {
-    set_header(1,7,1);
+    set_header(7,1);
     sendData(data_header, hum);
     Serial.print("Humidity "); Serial.println(hum);
   }
@@ -140,8 +140,8 @@ int sendData(char* header, double value) {
     Serial.println(header);
 }
 
-void set_header(int arudino_id, int sensor_id, int value_type) {
-  sprintf(data_header, "I%dA%dS%02dT%dV", arudino_id, 0, sensor_id, value_type);
+void set_header(int sensor_id, int value_type) {
+  sprintf(data_header, "I%dA%dS%02dT%dV", ARDUINO_ID, 0, sensor_id, value_type);
 }
 
 bool is_NaN(double value) {
