@@ -62,6 +62,8 @@ public class DataManager {
 
         aMap.put(25, "front_door_switch"); //Predne dvere boolean
         aMap.put(26, "back_door_switch"); //Zadne dvere boolean
+
+        aMap.put(27, "high_voltage"); //Pustene vysoke napatie boolean
         /******/
 
         /***Vakuova mierka***/

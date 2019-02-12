@@ -14,7 +14,8 @@ public class ArduinoCommunication extends Thread {
     // source of unicast receive code: https://www.baeldung.com/udp-in-java
 
     private DataProcessor dataProcessor;
-    private byte[] buf = new byte[256];
+    private byte[] inBuf = new byte[256];
+    private byte[] outBuf = new byte[256];
     private DatagramSocket socket;
     private final static int PORT = 5000;
     private int packetReceiveTimeout;
@@ -49,7 +50,7 @@ public class ArduinoCommunication extends Thread {
     @Override
     public void run() {
         while (true) {
-            DatagramPacket packet = new DatagramPacket(buf, buf.length);
+            DatagramPacket packet = new DatagramPacket(inBuf, inBuf.length);
             //System.out.println("ARDUINO: Waiting for packet...");
 
             try {
@@ -73,10 +74,10 @@ public class ArduinoCommunication extends Thread {
     }
 
     public void sendMessage(int arduinoId, String msg) {
-        buf = msg.getBytes();
+        outBuf = msg.getBytes();
         try {
             InetAddress ip = InetAddress.getByName(Main.getConfig().getArduinoIpMap().get(arduinoId));
-            DatagramPacket packet = new DatagramPacket(buf, buf.length, ip, PORT);
+            DatagramPacket packet = new DatagramPacket(outBuf, outBuf.length, ip, PORT);
 
             socket.send(packet);
             System.out.println("ARDUINO: SMS notification request packet sent!");
