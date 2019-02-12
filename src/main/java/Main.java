@@ -19,7 +19,7 @@ public class Main {
 
     public Main() {
         System.out.println("\"################# GHKP URYCHLOVAC #################");
-        config = new Configuration("config.toml");
+        config = new Configuration();
         DataManager DM = DataManager.getInstance();
         DM.initFiles();
 
