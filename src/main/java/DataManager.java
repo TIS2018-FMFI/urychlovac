@@ -21,15 +21,53 @@ public class DataManager {
     private static long NrLines= 605000000/Main.getConfig().getLoggingFrequency();
 
     private static final Map<Integer, String> SENSORS;
-    //TODO: Michal Kovac - update map
     static {
         Map<Integer, String> aMap = new HashMap<>();
-        aMap.put(0, "DHT22_temperature"); //teplota measured
-        aMap.put(1, "DHT22_humidity"); //vlhkost measured
-        aMap.put(2, "ReedSwitch"); //Dvere boolean
-        aMap.put(3, "DS18_cooling_water_temp"); //teplota measured
-        aMap.put(4, "Optic_water_level"); //stav hladiny boolean
-        aMap.put(5, "Vacuum_gauge"); //stav vakua boolean
+        /***Arduino pri generatore napatia***/
+        aMap.put(0, "DHT22_temperature_a1_1"); //teplota measured, arduino id 1, senzor 1
+        aMap.put(1, "DHT22_humidity_a1_1"); //vlhkost measured, arduino id 1, senzor 1
+
+        aMap.put(2, "DHT22_temperature_a1_2"); //teplota measured, arduino id 1, senzor 2
+        aMap.put(3, "DHT22_humidity_a1_2"); //vlhkost measured, arduino id 1, senzor 2
+
+        aMap.put(4, "DHT22_temperature_a1_3"); //teplota measured, arduino id 1, senzor 3
+        aMap.put(5, "DHT22_humidity_a1_3"); //vlhkost measured, arduino id 1, senzor 3
+
+        aMap.put(6, "DHT22_temperature_a1_4"); //teplota measured, arduino id 1, senzor 4
+        aMap.put(7, "DHT22_humidity_a1_4"); //vlhkost measured, arduino id 1, senzor 4
+        /******/
+
+        /***Arduino pri hlavni urychlovaca***/
+        aMap.put(8, "DHT22_temperature_a2_1"); //teplota measured, arduino id 2, senzor 1
+        aMap.put(9, "DHT22_humidity_a2_1"); //vlhkost measured, arduino id 2, senzor 1
+
+        aMap.put(10, "DHT22_temperature_a2_2"); //teplota measured, arduino id 2, senzor 2
+        aMap.put(11, "DHT22_humidity_a2_2"); //vlhkost measured, arduino id 2, senzor 2
+
+        aMap.put(12, "DHT22_temperature_a2_3"); //teplota measured, arduino id 2, senzor 3
+        aMap.put(13, "DHT22_humidity_a2_3"); //vlhkost measured, arduino id 2, senzor 3
+
+        aMap.put(14, "DHT22_temperature_a2_4"); //teplota measured, arduino id 2, senzor 4
+        aMap.put(15, "DHT22_humidity_a2_4"); //vlhkost measured, arduino id 2, senzor 4
+        /******/
+
+        /***Arduino na stlpe***/
+        aMap.put(20, "DHT22_temperature_a3_1"); //teplota measured, arduino id 0, senzor 1
+        aMap.put(21, "DHT22_humidity_a3_1"); //vlhkost measured, arduino id 0, senzor 1
+
+        aMap.put(22, "DS18_coolant_temp_1"); //teplota measured
+        aMap.put(23, "DS18_coolant_temp_2"); //teplota measured
+
+        aMap.put(24, "coolant level"); //stav hladiny chladiacej kvapaliny boolean
+
+        aMap.put(25, "front_door_switch"); //Predne dvere boolean
+        aMap.put(26, "back_door_switch"); //Zadne dvere boolean
+        /******/
+
+        /***Vakuova mierka***/
+        aMap.put(30, "Vacuum_gauge"); //stav vakua boolean
+        /******/
+
         SENSORS = Collections.unmodifiableMap(aMap);
     }
 
@@ -80,8 +118,8 @@ public class DataManager {
 
     public boolean timePassed(int sensorId, long duration){
         String result="";
+
         int linecount =0;
-        //String firstLine ="";
         File file = new File(ROOT_PATH+SENSORS.get(sensorId)+".csv");
         try {
             BufferedReader br = new BufferedReader(new FileReader(file));
