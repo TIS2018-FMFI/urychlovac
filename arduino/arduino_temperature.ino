@@ -131,7 +131,7 @@ void loop() {
   delay(WAIT_PERIOD); // wait to prevent unnecessary network load
 }
 
-int sendData(char* header, double value) {
+void sendData(char* header, double value) {
     Udp.beginPacket(remoteIP, remotePort);
     strcat(header, String(value, 1).c_str());
     Udp.println(header);
@@ -144,7 +144,7 @@ void set_header(int sensor_id, int value_type) {
   sprintf(data_header, "I%dA%dS%02dT%dV", ARDUINO_ID, 0, sensor_id, value_type);
 }
 
-bool is_NaN(double value) {
+boolean is_NaN(double value) {
   if(value != value) return true;
   return false;
 }

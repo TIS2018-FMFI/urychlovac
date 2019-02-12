@@ -141,7 +141,7 @@ void sendPacket(char* message) {
    Serial.println("Packet object destroyed");
 }
 
-bool gsmCheck() {
+boolean gsmCheck() {
   Serial.println("GSM check");
   SIM900.println("AT");
   delay(100);
