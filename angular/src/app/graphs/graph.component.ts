@@ -22,7 +22,9 @@ export class GraphComponent implements OnInit{
     'temperature': TypeTemperatureList,
     'humidity': TypeHumidityList 
   };
-  graphName: number = 0;
+  graphData = [];
+  graphNameIndex: number = 0;
+  graphName: string;
 
   constructor(private graphDataService: GraphDataService){
 
@@ -38,21 +40,29 @@ export class GraphComponent implements OnInit{
   }
 
   ngOnInit(){
-    this.chart.title.text = this.typeLists[this.graphType][this.graphName].name;
+    this.graphName = this.typeLists[this.graphType][this.graphNameIndex].name;
+    this.chart.title.text = this.graphName;
     this.chart.yAxis.title.text = this.yAxisTitle;
 
-    this.graphDataService.getGraphData(this.graphType + '/Acc/3hod').subscribe(
-      data => console.log(data)
+    this.graphDataService.getGraphData(this.graphType + '/' + this.graphName + '/' + this.periodList[this.periodIndex].beValue).subscribe(
+      data => this.graphData.push(data)
     );
   }
 
   changeInterval(){
     //TODO: interval na grafy -  bude volat metodu v service
     console.log(this.periodList[this.periodIndex]);
+    this.graphDataService.getGraphData(this.graphType + '/' + this.graphName + '/' + this.periodList[this.periodIndex].beValue).subscribe(
+      data => this.graphData.push(data)
+    );
   }
 
   changeGraphType(){//TODO:
-    console.log(this.typeLists[this.graphType][this.graphName]);
+    console.log(this.typeLists[this.graphType][this.graphNameIndex]);
+    this.chart.title.text = this.graphName;
+    this.graphDataService.getGraphData(this.graphType + '/' + this.graphName + '/' + this.periodList[this.periodIndex].beValue).subscribe(
+      data => this.graphData.push(data)
+    );
   }
   
 }
