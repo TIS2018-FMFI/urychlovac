@@ -13,6 +13,13 @@ public class DataManager {
     private static final String CSV_SEPARATOR = ";";
     private static String ROOT_PATH="/home/piestany/BACKEND_TEST/";
 
+    public static String getRootPath() {
+        return ROOT_PATH;
+    }
+
+    private static String ARCHIVE_PATH="Archive/";
+    private static long NrLines= 605000000/Main.getConfig().getLoggingFrequency();
+
     private static final Map<Integer, String> SENSORS;
     static {
         Map<Integer, String> aMap = new HashMap<>();
@@ -88,17 +95,31 @@ public class DataManager {
             String fileName = SENSORS.get(data.getId());
             if(timePassed(data.getId(),freq)) {
                 String writeData = convertToCSV(data);
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(data.getTimestamp());
+                int week = cal.get(Calendar.WEEK_OF_YEAR);
+                int year = cal.get(Calendar.YEAR);
+                File file = new File(ARCHIVE_PATH+SENSORS.get(data.getId())+"_"+year+"_"+week+".csv");
+                try {
+                    file.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 if (data instanceof MeasuredData) {
                     saveDataToFile(fileName, writeData);
+                    saveDataToFile(ARCHIVE_PATH+fileName+"_"+year+"_"+week, writeData);
                 }
                 if (data instanceof BinaryStatus) {
                     saveDataToFile(fileName,writeData);
+                    saveDataToFile(ARCHIVE_PATH+fileName+"_"+year+"_"+week, writeData);
                 }
             }
     }
 
     public boolean timePassed(int sensorId, long duration){
         String result="";
+
+        int linecount =0;
         File file = new File(ROOT_PATH+SENSORS.get(sensorId)+".csv");
         try {
             BufferedReader br = new BufferedReader(new FileReader(file));
@@ -106,16 +127,22 @@ public class DataManager {
             while ((st = br.readLine()) != null){
                 //System.out.println(st);
                 result=st;
+                linecount++;
             }
             if (result==""){
                 return true;
             } else{
+//                String[] firstLineArr = firstLine.split(CSV_SEPARATOR);
+//                Date dateFirst = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy").parse(firstLineArr[1]);
                 String[] line = result.split(CSV_SEPARATOR);
                 Date date =new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy").parse(line[1]);
                 //System.out.println(date.toString());
                 //System.out.println(Boolean.valueOf(new Date().getTime()-date.getTime()>=duration));
                 //System.out.println(""+(new Date().getTime()-date.getTime())+" "+duration);
                 if (Integer.parseInt(line[0])==sensorId && new Date().getTime()-date.getTime()>=duration){
+                    if (NrLines>=linecount){
+                        removeFirstLine(ROOT_PATH+SENSORS.get(sensorId)+".csv");
+                    }
                     return true;
                 }
             }
@@ -123,6 +150,27 @@ public class DataManager {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public void removeFirstLine(String fileName) throws IOException {
+        RandomAccessFile raf = new RandomAccessFile(fileName, "rw");
+        //Initial write position
+        long writePosition = raf.getFilePointer();
+        raf.readLine();
+        // Shift the next lines upwards.
+        long readPosition = raf.getFilePointer();
+
+        byte[] buff = new byte[1024];
+        int n;
+        while (-1 != (n = raf.read(buff))) {
+            raf.seek(writePosition);
+            raf.write(buff, 0, n);
+            readPosition += n;
+            writePosition += n;
+            raf.seek(readPosition);
+        }
+        raf.setLength(writePosition);
+        raf.close();
     }
 
     public String convertToCSV(LabData data){
