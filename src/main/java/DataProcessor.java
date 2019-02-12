@@ -43,8 +43,10 @@ public class DataProcessor {
 
             if (input.charAt(8) == '0') {//boolean status
                 if (input.charAt(10) == '0') {//value == false
+                    System.out.println("ARDUINO: Parsed value: 0");
                     return new BinaryStatus(sensorId, new Date(), false);
                 } else if (input.charAt(10) == '1') {
+                    System.out.println("ARDUINO: Parsed value: 1");
                     return new BinaryStatus(sensorId, new Date(), true);
                 }
             } else if (input.charAt(8) == '1') {//float status
@@ -58,7 +60,9 @@ public class DataProcessor {
                         break;
                     }
 
-                    if (input.charAt(i) == '.') {
+                    if (input.charAt(i) != '.' && (input.charAt(i) < '0' || input.charAt(i) > '9')) {
+                        break;
+                    } else if (input.charAt(i) == '.') {
                         separator = true;
                     } else if (!separator) {
                         value = value * 10 + input.charAt(i) - '0';
@@ -70,15 +74,17 @@ public class DataProcessor {
                     i++;
                 }
 
+                System.out.println("ARDUINO: Parsed value: " + value);
                 return new MeasuredData(sensorId, new Date(), value);
             }
         } else if (input.charAt(3) == '1') {
             if (input.charAt(5) == '1') {
-                //TODO send notification
-                System.out.println("Arduino with ID " + (input.charAt(1) - '0') + "has an issue");
+                Main.getNotificationManager().sendNotificationArduinoFault(input.charAt(1) - '0', "GSM modul hlasi chybu");
+                System.out.println("ARDUINO: Notification Arduino with ID " + (input.charAt(1) - '0') + " has an issue");
             }
         }
 
+        System.out.println("ARDUINO: ERROR: Couldn't parse packet!");
         return null;
     }
 }

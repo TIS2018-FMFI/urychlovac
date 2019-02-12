@@ -16,12 +16,51 @@ public class DataManager {
     private static final Map<Integer, String> SENSORS;
     static {
         Map<Integer, String> aMap = new HashMap<>();
-        aMap.put(0, "DHT22_temperature"); //teplota measured
-        aMap.put(1, "DHT22_humidity"); //vlhkost measured
-        aMap.put(2, "ReedSwitch"); //Dvere boolean
-        aMap.put(3, "DS18_cooling_water_temp"); //teplota measured
-        aMap.put(4, "Optic_water_level"); //stav hladiny boolean
-        aMap.put(5, "Vacuum_gauge"); //stav vakua boolean
+        /***Arduino pri generatore napatia***/
+        aMap.put(0, "DHT22_temperature_a1_1"); //teplota measured, arduino id 1, senzor 1
+        aMap.put(1, "DHT22_humidity_a1_1"); //vlhkost measured, arduino id 1, senzor 1
+
+        aMap.put(2, "DHT22_temperature_a1_2"); //teplota measured, arduino id 1, senzor 2
+        aMap.put(3, "DHT22_humidity_a1_2"); //vlhkost measured, arduino id 1, senzor 2
+
+        aMap.put(4, "DHT22_temperature_a1_3"); //teplota measured, arduino id 1, senzor 3
+        aMap.put(5, "DHT22_humidity_a1_3"); //vlhkost measured, arduino id 1, senzor 3
+
+        aMap.put(6, "DHT22_temperature_a1_4"); //teplota measured, arduino id 1, senzor 4
+        aMap.put(7, "DHT22_humidity_a1_4"); //vlhkost measured, arduino id 1, senzor 4
+        /******/
+
+        /***Arduino pri hlavni urychlovaca***/
+        aMap.put(8, "DHT22_temperature_a2_1"); //teplota measured, arduino id 2, senzor 1
+        aMap.put(9, "DHT22_humidity_a2_1"); //vlhkost measured, arduino id 2, senzor 1
+
+        aMap.put(10, "DHT22_temperature_a2_2"); //teplota measured, arduino id 2, senzor 2
+        aMap.put(11, "DHT22_humidity_a2_2"); //vlhkost measured, arduino id 2, senzor 2
+
+        aMap.put(12, "DHT22_temperature_a2_3"); //teplota measured, arduino id 2, senzor 3
+        aMap.put(13, "DHT22_humidity_a2_3"); //vlhkost measured, arduino id 2, senzor 3
+
+        aMap.put(14, "DHT22_temperature_a2_4"); //teplota measured, arduino id 2, senzor 4
+        aMap.put(15, "DHT22_humidity_a2_4"); //vlhkost measured, arduino id 2, senzor 4
+        /******/
+
+        /***Arduino na stlpe***/
+        aMap.put(20, "DHT22_temperature_a3_1"); //teplota measured, arduino id 0, senzor 1
+        aMap.put(21, "DHT22_humidity_a3_1"); //vlhkost measured, arduino id 0, senzor 1
+
+        aMap.put(22, "DS18_coolant_temp_1"); //teplota measured
+        aMap.put(23, "DS18_coolant_temp_2"); //teplota measured
+
+        aMap.put(24, "coolant level"); //stav hladiny chladiacej kvapaliny boolean
+
+        aMap.put(25, "front_door_switch"); //Predne dvere boolean
+        aMap.put(26, "back_door_switch"); //Zadne dvere boolean
+        /******/
+
+        /***Vakuova mierka***/
+        aMap.put(30, "Vacuum_gauge"); //stav vakua boolean
+        /******/
+
         SENSORS = Collections.unmodifiableMap(aMap);
     }
 
@@ -34,7 +73,7 @@ public class DataManager {
 
     public void initFiles(){
         for(Integer key : SENSORS.keySet()){
-            File file = new File(ROOT_PATH+SENSORS.get(key)+".txt");
+            File file = new File(ROOT_PATH+SENSORS.get(key)+".csv");
             try {
                 file.createNewFile();
             } catch (IOException e) {
@@ -50,17 +89,17 @@ public class DataManager {
             if(timePassed(data.getId(),freq)) {
                 String writeData = convertToCSV(data);
                 if (data instanceof MeasuredData) {
-                    saveDataToFile(ROOT_PATH+fileName, writeData);
+                    saveDataToFile(fileName, writeData);
                 }
                 if (data instanceof BinaryStatus) {
-                    saveDataToFile(ROOT_PATH+fileName,writeData);
+                    saveDataToFile(fileName,writeData);
                 }
             }
     }
 
     public boolean timePassed(int sensorId, long duration){
         String result="";
-        File file = new File(ROOT_PATH+SENSORS.get(sensorId)+".txt");
+        File file = new File(ROOT_PATH+SENSORS.get(sensorId)+".csv");
         try {
             BufferedReader br = new BufferedReader(new FileReader(file));
             String st;
@@ -116,7 +155,7 @@ public class DataManager {
     }
 
     public void saveDataToFile(String fileName, String data) {
-        try(FileWriter fw = new FileWriter(ROOT_PATH+fileName+".txt", true);
+        try(FileWriter fw = new FileWriter(ROOT_PATH+fileName+".csv", true);
             BufferedWriter bw = new BufferedWriter(fw);
             PrintWriter out = new PrintWriter(bw)) {
             out.println(data);
@@ -148,7 +187,7 @@ public class DataManager {
     }
 
     public List<LabData> loadDataSensorTimePeriod(int sensorId, Date fromTime, Date toTime) {
-        List<LabData> lines = loadDataFromFile(ROOT_PATH+SENSORS.get(sensorId)+".txt");
+        List<LabData> lines = loadDataFromFile(ROOT_PATH+SENSORS.get(sensorId)+".csv");
         List<LabData> result = new ArrayList<>();
         for (LabData data : lines){
             if (data.getId()==sensorId && (data.getTimestamp().after(fromTime) && data.getTimestamp().before(toTime))){
