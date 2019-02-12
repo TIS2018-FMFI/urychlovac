@@ -42,10 +42,3 @@ logging_frequency = 1000    # 1000ms = 1s
 
         [ip_addreeses.arduino.4]
         ip = "147.213.232.144"
-
-
-
-
-
-
-

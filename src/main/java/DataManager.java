@@ -11,7 +11,7 @@ import java.util.*;
 public class DataManager {
     private static DataManager ourInstance = new DataManager();
     private static final String CSV_SEPARATOR = ";";
-    private static String LOGS_PATH ="/home/piestany/urychlovac/logs/";
+    private static String LOGS_PATH = Configuration.getRootPath() + "logs/";
 
     public static String getLogsPath() {
         return LOGS_PATH;
