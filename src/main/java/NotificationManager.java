@@ -1,5 +1,4 @@
 import java.io.*;
-import java.util.List;
 
 /**
  * Notification manager class - used to monitor values in conditions of notifications and send notification when
@@ -16,14 +15,14 @@ public class NotificationManager{
         Main.getArduinoCommunication().sendMessage(3, rule.getText());
         Main.getArduinoCommunication().sendMessage(4, rule.getText());
         //System.out.println("NotifManag: "+rule.getText());
-        File file = new File(DataManager.getInstance().getRootPath()+"NOTIFICATIONS.txt");
+        File file = new File(DataManager.getInstance().getLogsPath()+"NOTIFICATIONS.txt");
         try {
             file.createNewFile();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        try(FileWriter fw = new FileWriter(DataManager.getInstance().getRootPath()+"NOTIFICATIONS.txt", true);
+        try(FileWriter fw = new FileWriter(DataManager.getInstance().getLogsPath()+"NOTIFICATIONS.txt", true);
             BufferedWriter bw = new BufferedWriter(fw);
             PrintWriter out = new PrintWriter(bw)) {
             out.println(rule.getText());
