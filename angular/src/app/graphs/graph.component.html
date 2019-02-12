@@ -17,7 +17,7 @@
     <div class="graph-select">
         <select 
             class="form-control"   
-            [(ngModel)]="graphName"   
+            [(ngModel)]="graphNameIndex"   
             (change)="changeGraphType()" 
         >
             <option 
@@ -32,6 +32,6 @@
     <div [ng2-highcharts]="chart"></div> 
 </div>
 
-<label>{{typeLists[graphType][graphName].name}}</label>
+<label>{{typeLists[graphType][graphNameIndex].name}}</label>
 
 
