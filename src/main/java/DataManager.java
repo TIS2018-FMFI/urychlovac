@@ -12,7 +12,7 @@ import java.util.*;
 public class DataManager {
     private static DataManager ourInstance = new DataManager();
     private static final String CSV_SEPARATOR = ";";
-    private static String LOGS_PATH = Configuration.getRootPath() + "logs/";
+    private static String LOGS_PATH = Configuration.ROOT_PATH + "logs/";
 
     public static String getLogsPath() {
         return LOGS_PATH;
