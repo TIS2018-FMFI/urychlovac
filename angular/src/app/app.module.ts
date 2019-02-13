@@ -12,6 +12,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { GraphDataService } from './service/graph-data.service';
 import { DataService } from './service/data.service';
 import { HttpClientModule } from '@angular/common/http';
+import { ScatterChartComponent } from './shared/scatter-chart/scatter-chart.component';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { HttpClientModule } from '@angular/common/http';
     StatusHeaderComponent,
     LiveFeedComponent,
     GraphComponent,
+    ScatterChartComponent
   ],
   imports: [
     HttpClientModule,

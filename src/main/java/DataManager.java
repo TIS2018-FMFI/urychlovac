@@ -1,4 +1,5 @@
 import java.io.*;
+import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -11,13 +12,13 @@ import java.util.*;
 public class DataManager {
     private static DataManager ourInstance = new DataManager();
     private static final String CSV_SEPARATOR = ";";
-    private static String ROOT_PATH="/home/piestany/BACKEND_TEST/";
+    private static String LOGS_PATH = Configuration.ROOT_PATH + "logs/";
 
-    public static String getRootPath() {
-        return ROOT_PATH;
+    public static String getLogsPath() {
+        return LOGS_PATH;
     }
 
-    private static String ARCHIVE_PATH="Archive/";
+    private static String ARCHIVE_PATH_SUFFIX ="archive/";
     private static long NrLines= 605000000/Main.getConfig().getLoggingFrequency();
 
     private static final Map<Integer, String> SENSORS;
@@ -82,7 +83,7 @@ public class DataManager {
 
     public void initFiles(){
         for(Integer key : SENSORS.keySet()){
-            File file = new File(ROOT_PATH+SENSORS.get(key)+".csv");
+            File file = new File(LOGS_PATH +SENSORS.get(key)+".csv");
             try {
                 file.createNewFile();
             } catch (IOException e) {
@@ -101,7 +102,7 @@ public class DataManager {
                 cal.setTime(data.getTimestamp());
                 int week = cal.get(Calendar.WEEK_OF_YEAR);
                 int year = cal.get(Calendar.YEAR);
-                File file = new File(ARCHIVE_PATH+SENSORS.get(data.getId())+"_"+year+"_"+week+".csv");
+                File file = new File(ARCHIVE_PATH_SUFFIX +SENSORS.get(data.getId())+"_"+year+"_"+week+".csv");
                 try {
                     file.createNewFile();
                 } catch (IOException e) {
@@ -109,11 +110,11 @@ public class DataManager {
                 }
                 if (data instanceof MeasuredData) {
                     saveDataToFile(fileName, writeData);
-                    saveDataToFile(ARCHIVE_PATH+fileName+"_"+year+"_"+week, writeData);
+                    saveDataToFile(ARCHIVE_PATH_SUFFIX +fileName+"_"+year+"_"+week, writeData);
                 }
                 if (data instanceof BinaryStatus) {
                     saveDataToFile(fileName,writeData);
-                    saveDataToFile(ARCHIVE_PATH+fileName+"_"+year+"_"+week, writeData);
+                    saveDataToFile(ARCHIVE_PATH_SUFFIX +fileName+"_"+year+"_"+week, writeData);
                 }
             }
     }
@@ -122,7 +123,7 @@ public class DataManager {
         String result="";
 
         int linecount =0;
-        File file = new File(ROOT_PATH+SENSORS.get(sensorId)+".csv");
+        File file = new File(LOGS_PATH +SENSORS.get(sensorId)+".csv");
         try {
             BufferedReader br = new BufferedReader(new FileReader(file));
             String st;
@@ -137,13 +138,13 @@ public class DataManager {
 //                String[] firstLineArr = firstLine.split(CSV_SEPARATOR);
 //                Date dateFirst = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy").parse(firstLineArr[1]);
                 String[] line = result.split(CSV_SEPARATOR);
-                Date date =new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy").parse(line[1]);
+                Date date =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(line[1]);
                 //System.out.println(date.toString());
                 //System.out.println(Boolean.valueOf(new Date().getTime()-date.getTime()>=duration));
                 //System.out.println(""+(new Date().getTime()-date.getTime())+" "+duration);
                 if (Integer.parseInt(line[0])==sensorId && new Date().getTime()-date.getTime()>=duration){
                     if (NrLines>=linecount){
-                        removeFirstLine(ROOT_PATH+SENSORS.get(sensorId)+".csv");
+                        removeFirstLine(LOGS_PATH +SENSORS.get(sensorId)+".csv");
                     }
                     return true;
                 }
@@ -177,11 +178,13 @@ public class DataManager {
 
     public String convertToCSV(LabData data){
         String writeData=null;
+        Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String date = ((SimpleDateFormat) formatter).format(data.getTimestamp());
         if (data instanceof MeasuredData) {
-            writeData = data.getId().toString()+CSV_SEPARATOR+data.getTimestamp().toString()+CSV_SEPARATOR+((MeasuredData) data).getValue();
+            writeData = data.getId().toString()+CSV_SEPARATOR+date+CSV_SEPARATOR+((MeasuredData) data).getValue();
         } else
         if (data instanceof BinaryStatus) {
-            writeData = data.getId().toString()+CSV_SEPARATOR+data.getTimestamp().toString()+CSV_SEPARATOR+((BinaryStatus) data).isValue();
+            writeData = data.getId().toString()+CSV_SEPARATOR+date+CSV_SEPARATOR+((BinaryStatus) data).isValue();
         }
         return writeData;
     }
@@ -205,7 +208,7 @@ public class DataManager {
     }
 
     public void saveDataToFile(String fileName, String data) {
-        try(FileWriter fw = new FileWriter(ROOT_PATH+fileName+".csv", true);
+        try(FileWriter fw = new FileWriter(LOGS_PATH +fileName+".csv", true);
             BufferedWriter bw = new BufferedWriter(fw);
             PrintWriter out = new PrintWriter(bw)) {
             out.println(data);
@@ -216,14 +219,14 @@ public class DataManager {
 
     public List<LabData> loadDataFromFile(String fileName) {
         List<LabData> result = new ArrayList<>();
-        File file = new File(ROOT_PATH+fileName);
+        File file = new File(LOGS_PATH +fileName);
         try {
             BufferedReader br = new BufferedReader(new FileReader(file));
             String st;
             while ((st = br.readLine()) != null){
                 String[] data = st.split(CSV_SEPARATOR);
                 int sensorId = Integer.parseInt(data[0]);
-                Date time =new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy").parse(data[1]);
+                Date time =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(data[1]);
                 if(data[2].equals("true") || data[2].equals("false")){
                     result.add(new BinaryStatus(sensorId, time, Boolean.valueOf(data[2])));
                 } else {
@@ -237,7 +240,7 @@ public class DataManager {
     }
 
     public List<LabData> loadDataSensorTimePeriod(int sensorId, Date fromTime, Date toTime) {
-        List<LabData> lines = loadDataFromFile(ROOT_PATH+SENSORS.get(sensorId)+".csv");
+        List<LabData> lines = loadDataFromFile(LOGS_PATH +SENSORS.get(sensorId)+".csv");
         List<LabData> result = new ArrayList<>();
         for (LabData data : lines){
             if (data.getId()==sensorId && (data.getTimestamp().after(fromTime) && data.getTimestamp().before(toTime))){
@@ -249,7 +252,7 @@ public class DataManager {
 
     public List<String> getListOfLogs(String fileName) {
         List<String> result = new ArrayList<>();
-        File file = new File(ROOT_PATH+fileName);
+        File file = new File(LOGS_PATH +fileName);
         try {
             BufferedReader br = new BufferedReader(new FileReader(file));
             String st;

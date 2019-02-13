@@ -3,6 +3,8 @@ import net.consensys.cava.toml.TomlParseResult;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,14 +19,20 @@ public class Configuration {
     private long loggingFrequency;
     private List<NotificationRule> notificationRules;
     private HashMap<Integer, String> arduinoIpMap;
+    static String  ROOT_PATH = "/home/piestany/urychlovac/";
 
-    public Configuration(String configFilePath) {
 
-        InputStream is = Configuration.class.getResourceAsStream(configFilePath);
+    public Configuration() {
+
+        String configFilePath = getRootPath() + "config.toml";
+        Path source = Paths.get(configFilePath);
+
         TomlParseResult result = null;
+
         try {
-            result = Toml.parse(is);
+            result = Toml.parse(source);
         } catch (IOException e) {
+            System.out.println("Configuration: ERROR! Toml parsing unsuccessful!");
             e.printStackTrace();
         }
 
@@ -65,15 +73,17 @@ public class Configuration {
 
 
             // Mapa ip-ciek Arduin:
-            arduinoIpMap = new HashMap<>();
+            HashMap newArduinoIpMap = new HashMap<>();
             String arduinoIpAddress_prefix = "ip_addreeses.arduino.";
             String ip_suffix = ".ip";
 
-            arduinoIpMap.put(0, result.getString(arduinoIpAddress_prefix + "0" + ip_suffix));
-            arduinoIpMap.put(1, result.getString(arduinoIpAddress_prefix + "1" + ip_suffix));
-            arduinoIpMap.put(2, result.getString(arduinoIpAddress_prefix + "2" + ip_suffix));
-            arduinoIpMap.put(3, result.getString(arduinoIpAddress_prefix + "3" + ip_suffix));
-            arduinoIpMap.put(4, result.getString(arduinoIpAddress_prefix + "4" + ip_suffix));
+            newArduinoIpMap.put(0, result.getString(arduinoIpAddress_prefix + "0" + ip_suffix));
+            newArduinoIpMap.put(1, result.getString(arduinoIpAddress_prefix + "1" + ip_suffix));
+            newArduinoIpMap.put(2, result.getString(arduinoIpAddress_prefix + "2" + ip_suffix));
+            newArduinoIpMap.put(3, result.getString(arduinoIpAddress_prefix + "3" + ip_suffix));
+            newArduinoIpMap.put(4, result.getString(arduinoIpAddress_prefix + "4" + ip_suffix));
+
+            setArduinoIpMap(newArduinoIpMap);
 
 
             // TEST:
@@ -81,8 +91,9 @@ public class Configuration {
             System.out.println("Logging frequency: " + getLoggingFrequency());
             System.out.println("Notification rules (count): " + getNotificationRules().size());
             System.out.println("\n############# End of CONFIGURATION TEST #############");
+
         } else {
-            System.err.println("ERROR! Configuration: result is null!");
+            System.out.println("Configuration: ERROR! Toml parsing unsuccessful!");
         }
 
 
@@ -110,5 +121,9 @@ public class Configuration {
 
     public void setArduinoIpMap(HashMap<Integer, String> arduinoIpMap) {
         this.arduinoIpMap = arduinoIpMap;
+    }
+
+    public static String getRootPath() {
+        return ROOT_PATH;
     }
 }
