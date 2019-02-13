@@ -7,16 +7,19 @@
       <div class="col-md-4"></div>
      
       <div class="col-md-8">
-        <app-line-graph 
+        
+        <graph 
           [graphType]="'temperature'"
           [yAxisTitle]="'Temp. [°C]'"
         >
-        </app-line-graph>
+        </graph>
+
         <br>
-        <app-line-graph 
+
+        <graph 
           [graphType]="'humidity'"
           [yAxisTitle]="'Humid. [%]'"
-        ></app-line-graph>
+        ></graph>
         <br>
 
       </div>

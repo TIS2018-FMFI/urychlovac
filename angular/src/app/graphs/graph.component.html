@@ -29,7 +29,14 @@
         </select>
     </div>
     
-    <div [ng2-highcharts]="chart"></div> 
+    <!-- <div [ng2-highcharts]="chart"></div>  -->
+    <scatter-chart
+        [graphType]='graphType'
+        [yAxisTitle]='yAxisTitle'
+        [data]='graphData'
+        [period]='periodList[periodIndex]'
+    >
+    </scatter-chart>
 </div>
 
 <label>{{typeLists[graphType][graphNameIndex].name}}</label>
