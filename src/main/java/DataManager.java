@@ -12,13 +12,14 @@ import java.util.*;
 public class DataManager {
     private static DataManager ourInstance = new DataManager();
     private static final String CSV_SEPARATOR = ";";
-    private static String LOGS_PATH = Configuration.ROOT_PATH + "logs/";
+    private static final String FILE_SEPARATOR = System.getProperty("file.separator");
+    private static String LOGS_PATH = "logs" + FILE_SEPARATOR;
 
     public static String getLogsPath() {
         return LOGS_PATH;
     }
 
-    private static String ARCHIVE_PATH_SUFFIX ="archive/";
+    private static String ARCHIVE_PATH_SUFFIX = "archive" + FILE_SEPARATOR;
     private static long NrLines= 605000000/Main.getConfig().getLoggingFrequency();
 
     private static final Map<Integer, String> SENSORS;
@@ -95,28 +96,34 @@ public class DataManager {
     public void addData(LabData data){
         long freq = Main.getConfig().getLoggingFrequency();
         checkData(data);
-            String fileName = SENSORS.get(data.getId());
-            if(timePassed(data.getId(),freq)) {
-                String writeData = convertToCSV(data);
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(data.getTimestamp());
-                int week = cal.get(Calendar.WEEK_OF_YEAR);
-                int year = cal.get(Calendar.YEAR);
-                File file = new File(ARCHIVE_PATH_SUFFIX +SENSORS.get(data.getId())+"_"+year+"_"+week+".csv");
-                try {
-                    file.createNewFile();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                if (data instanceof MeasuredData) {
-                    saveDataToFile(fileName, writeData);
-                    saveDataToFile(ARCHIVE_PATH_SUFFIX +fileName+"_"+year+"_"+week, writeData);
-                }
-                if (data instanceof BinaryStatus) {
-                    saveDataToFile(fileName,writeData);
-                    saveDataToFile(ARCHIVE_PATH_SUFFIX +fileName+"_"+year+"_"+week, writeData);
-                }
+        String fileName = SENSORS.get(data.getId());
+        if(timePassed(data.getId(),freq)) {
+            String writeData = convertToCSV(data);
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(data.getTimestamp());
+            int week = cal.get(Calendar.WEEK_OF_YEAR);
+            int year = cal.get(Calendar.YEAR);
+            String filePathName = LOGS_PATH + ARCHIVE_PATH_SUFFIX + SENSORS.get(data.getId()) + "_" + year + "_" + week + ".csv";
+            File file = new File(filePathName);
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                System.out.println("DATA LOGGING: Failed to create file " + filePathName + "!");
+                e.printStackTrace();
             }
+
+            saveDataToFile(fileName, writeData);
+            saveDataToFile(ARCHIVE_PATH_SUFFIX +fileName+"_"+year+"_"+week, writeData);
+            /*
+            if (data instanceof MeasuredData) {
+                saveDataToFile(fileName, writeData);
+                saveDataToFile(ARCHIVE_PATH_SUFFIX +fileName+"_"+year+"_"+week, writeData);
+            }
+            if (data instanceof BinaryStatus) {
+                saveDataToFile(fileName, writeData);
+                saveDataToFile(ARCHIVE_PATH_SUFFIX +fileName+"_"+year+"_"+week, writeData);
+            }*/
+        }
     }
 
     public boolean timePassed(int sensorId, long duration){
@@ -150,6 +157,7 @@ public class DataManager {
                 }
             }
         } catch (Exception e){
+            System.out.println("DATA LOGGING: Error checking last update time!");
             e.printStackTrace();
         }
         return false;
@@ -213,6 +221,7 @@ public class DataManager {
             PrintWriter out = new PrintWriter(bw)) {
             out.println(data);
         } catch (IOException e) {
+            System.out.println("DATA LOGGING: Error saving data to file!");
             e.printStackTrace();
         }
     }
@@ -234,6 +243,7 @@ public class DataManager {
                 }
             }
         } catch (Exception e){
+            System.out.println("DATA LOGGING: Error loading data from file!");
             e.printStackTrace();
         }
         return result;
