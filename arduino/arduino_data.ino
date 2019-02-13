@@ -6,7 +6,7 @@
 
 /************************CONFIG**************************************************/
 int ARDUINO_ID = 0;
-const int WAIT_PERIOD = 200;
+const int WAIT_PERIOD = 50;
 /************************DHT22 sensor********************************************/
 //define DHT22
 const byte DHTPIN = 7;     // what pin is the DHT22 sensor connected to
@@ -14,8 +14,8 @@ const byte DHTPIN = 7;     // what pin is the DHT22 sensor connected to
 
 DHT dht(DHTPIN, DHTTYPE);
 /************************DS18 sensor*********************************************/
-const byte DS18_PIN_1 = 9;      // what pin is the 1st DS18 sensor connected to
-const byte DS18_PIN_2 = 10;     // what pin is the 2nd DS18 sensor connected to
+const byte DS18_PIN_1 = 8;      // what pin is the 1st DS18 sensor connected to
+const byte DS18_PIN_2 = 9;     // what pin is the 2nd DS18 sensor connected to
 
 OneWire ow_ds18_1(DS18_PIN_1);
 OneWire ow_ds18_2(DS18_PIN_2);
@@ -34,8 +34,8 @@ const byte DOOR_SWITCH_PIN_2 = 5;     // what pin is the back door switch connec
 char data_header[16];
 
 // Ethernet variables
-byte mac[] = {0x41, 0x52, 0x44, 0x55, 0x4E, 0xA0 + ARDUINO_ID}; // arduino id is coded into mac, so it's unique and identifiable
-IPAddress ip(147, 213, 232, 140 + ARDUINO_ID);
+byte mac[] = {0x10, 0x20, 0x30, 0x40, 0x50, 0x60}; // arduino id is coded into mac, so it's unique and identifiable
+IPAddress ip(147, 213, 232, 140);
 IPAddress gateway(147, 213, 232, 1);
 IPAddress subnet(255, 255, 255, 0);
 IPAddress nameserver(147, 213, 1, 1);
@@ -50,9 +50,16 @@ void setup() {
   Serial.println("Initializing...");
 
   // Ethernet init
-  Serial.println("Ethernet initializing...");
+  Serial.println("Ethernet init...");
   Ethernet.begin(mac, ip, nameserver, gateway, subnet);
-  Udp.begin(localPort);
+  delay(15000);
+
+  Serial.println("Udp init...");
+  if(!Udp.begin(localPort)) {
+    Serial.println("UDP failed...");
+  }
+
+  delay(15000);
 
   // DHT22 init
   Serial.println("DHT22 initializing...");
@@ -125,7 +132,7 @@ void loop() {
   Serial.println("********Coolant level********");
 
   value = -1;
-  if (analogRead(COOLANT_SENSOR_PIN) > COOLANT_LEVEL_THRESHOLD) {
+  if (analogRead(COOLANT_SENSOR_PIN) < COOLANT_LEVEL_THRESHOLD) {
     value = 0;
     Serial.println("Coolant level is OK");
   } else {
@@ -166,16 +173,25 @@ void loop() {
 
   /*********************/
   Serial.println("*********************");
-  delay(WAIT_PERIOD); // wait to prevent unnecessary network load
+  //delay(WAIT_PERIOD); // wait to prevent unnecessary network load
 }
 
 void sendData(char* header, double value) {
+  Serial.println("Sending packet!");
+  
   Udp.beginPacket(remoteIP, remotePort);
+  Serial.println("Begin ok!");
+  
   strcat(header, String(value, 1).c_str());
   Udp.println(header);
+  Serial.println("Print ok!");
+  
   Udp.endPacket();
-
+  Serial.println("End ok!");
+  
   Serial.println(header);
+  Serial.println("Packet sent!");
+  delay(WAIT_PERIOD);
 }
 
 void set_header(int sensor_id, int value_type) {
