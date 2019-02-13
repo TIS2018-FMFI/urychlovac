@@ -1,7 +1,7 @@
 export class LabData {
     constructor(
         public id: number,
-        public value: number,
-        public date: Date
+        public date: any,
+        public value: number
     ){}
 }
