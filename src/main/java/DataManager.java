@@ -12,13 +12,15 @@ import java.util.*;
 public class DataManager {
     private static DataManager ourInstance = new DataManager();
     private static final String CSV_SEPARATOR = ";";
-    private static String LOGS_PATH = Configuration.ROOT_PATH + "logs/";
+    private static final String FILE_SEPARATOR = System.getProperty("file.separator");
+    private static String LOGS_PATH = "logs" + FILE_SEPARATOR;      // for archived logs
+    private static String DATA_PATH = "www"  + FILE_SEPARATOR + "data" + FILE_SEPARATOR;    // for frontend
 
     public static String getLogsPath() {
         return LOGS_PATH;
     }
 
-    private static String ARCHIVE_PATH_SUFFIX ="archive/";
+    private static String ARCHIVE_PATH_SUFFIX = "archive" + FILE_SEPARATOR;
     private static long NrLines= 605000000/Main.getConfig().getLoggingFrequency();
 
     private static final Map<Integer, String> SENSORS;
@@ -83,10 +85,11 @@ public class DataManager {
 
     public void initFiles(){
         for(Integer key : SENSORS.keySet()){
-            File file = new File(LOGS_PATH +SENSORS.get(key)+".csv");
+            File file = new File(DATA_PATH +SENSORS.get(key)+".csv");
             try {
                 file.createNewFile();
             } catch (IOException e) {
+                System.out.println("DATA LOGGING: Failed creating file for frontend!");
                 e.printStackTrace();
             }
         }
@@ -94,36 +97,42 @@ public class DataManager {
 
     public void addData(LabData data){
         long freq = Main.getConfig().getLoggingFrequency();
-        checkData(data);
-            String fileName = SENSORS.get(data.getId());
-            if(timePassed(data.getId(),freq)) {
-                String writeData = convertToCSV(data);
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(data.getTimestamp());
-                int week = cal.get(Calendar.WEEK_OF_YEAR);
-                int year = cal.get(Calendar.YEAR);
-                File file = new File(ARCHIVE_PATH_SUFFIX +SENSORS.get(data.getId())+"_"+year+"_"+week+".csv");
-                try {
-                    file.createNewFile();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                if (data instanceof MeasuredData) {
-                    saveDataToFile(fileName, writeData);
-                    saveDataToFile(ARCHIVE_PATH_SUFFIX +fileName+"_"+year+"_"+week, writeData);
-                }
-                if (data instanceof BinaryStatus) {
-                    saveDataToFile(fileName,writeData);
-                    saveDataToFile(ARCHIVE_PATH_SUFFIX +fileName+"_"+year+"_"+week, writeData);
-                }
+        checkData(data);        // check notification conditions
+        String fileName = DATA_PATH + SENSORS.get(data.getId()) + ".csv";
+        if(timePassed(data.getId(),freq)) {
+            String writeData = convertToCSV(data);
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(data.getTimestamp());
+            int week = cal.get(Calendar.WEEK_OF_YEAR);
+            int year = cal.get(Calendar.YEAR);
+            String archiveFilePathName = LOGS_PATH + SENSORS.get(data.getId()) + "_" + year + "_" + week + ".csv";
+            File file = new File(archiveFilePathName);
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                System.out.println("DATA LOGGING: Failed to create file " + archiveFilePathName + "!");
+                e.printStackTrace();
             }
+
+            saveDataToFile(fileName, writeData);
+            saveDataToFile(archiveFilePathName, writeData);
+            /*
+            if (data instanceof MeasuredData) {
+                saveDataToFile(fileName, writeData);
+                saveDataToFile(ARCHIVE_PATH_SUFFIX +fileName+"_"+year+"_"+week, writeData);
+            }
+            if (data instanceof BinaryStatus) {
+                saveDataToFile(fileName, writeData);
+                saveDataToFile(ARCHIVE_PATH_SUFFIX +fileName+"_"+year+"_"+week, writeData);
+            }*/
+        }
     }
 
     public boolean timePassed(int sensorId, long duration){
         String result="";
 
         int linecount =0;
-        File file = new File(LOGS_PATH +SENSORS.get(sensorId)+".csv");
+        File file = new File(DATA_PATH + SENSORS.get(sensorId) + ".csv");
         try {
             BufferedReader br = new BufferedReader(new FileReader(file));
             String st;
@@ -144,12 +153,13 @@ public class DataManager {
                 //System.out.println(""+(new Date().getTime()-date.getTime())+" "+duration);
                 if (Integer.parseInt(line[0])==sensorId && new Date().getTime()-date.getTime()>=duration){
                     if (NrLines>=linecount){
-                        removeFirstLine(LOGS_PATH +SENSORS.get(sensorId)+".csv");
+                        removeFirstLine(DATA_PATH +SENSORS.get(sensorId)+".csv");
                     }
                     return true;
                 }
             }
         } catch (Exception e){
+            System.out.println("DATA LOGGING: Error checking last update time!");
             e.printStackTrace();
         }
         return false;
@@ -208,18 +218,19 @@ public class DataManager {
     }
 
     public void saveDataToFile(String fileName, String data) {
-        try(FileWriter fw = new FileWriter(LOGS_PATH +fileName+".csv", true);
+        try(FileWriter fw = new FileWriter(fileName, true);
             BufferedWriter bw = new BufferedWriter(fw);
             PrintWriter out = new PrintWriter(bw)) {
             out.println(data);
         } catch (IOException e) {
+            System.out.println("DATA LOGGING: Error saving frontend data to file!");
             e.printStackTrace();
         }
     }
 
     public List<LabData> loadDataFromFile(String fileName) {
         List<LabData> result = new ArrayList<>();
-        File file = new File(LOGS_PATH +fileName);
+        File file = new File(fileName);
         try {
             BufferedReader br = new BufferedReader(new FileReader(file));
             String st;
@@ -234,13 +245,14 @@ public class DataManager {
                 }
             }
         } catch (Exception e){
+            System.out.println("DATA LOGGING: Error loading data from file!");
             e.printStackTrace();
         }
         return result;
     }
 
     public List<LabData> loadDataSensorTimePeriod(int sensorId, Date fromTime, Date toTime) {
-        List<LabData> lines = loadDataFromFile(LOGS_PATH +SENSORS.get(sensorId)+".csv");
+        List<LabData> lines = loadDataFromFile(DATA_PATH +SENSORS.get(sensorId)+".csv");
         List<LabData> result = new ArrayList<>();
         for (LabData data : lines){
             if (data.getId()==sensorId && (data.getTimestamp().after(fromTime) && data.getTimestamp().before(toTime))){
@@ -252,7 +264,7 @@ public class DataManager {
 
     public List<String> getListOfLogs(String fileName) {
         List<String> result = new ArrayList<>();
-        File file = new File(LOGS_PATH +fileName);
+        File file = new File(fileName);
         try {
             BufferedReader br = new BufferedReader(new FileReader(file));
             String st;

@@ -19,7 +19,7 @@ public class Configuration {
     private long loggingFrequency;
     private List<NotificationRule> notificationRules;
     private HashMap<Integer, String> arduinoIpMap;
-    static String  ROOT_PATH = "/home/piestany/urychlovac/";
+    static String ROOT_PATH = "/home/piestany/urychlovac/";
 
 
     public Configuration() {

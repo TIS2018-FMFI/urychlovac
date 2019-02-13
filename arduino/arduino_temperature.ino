@@ -3,14 +3,14 @@
 #include <EthernetUdp.h>
 
 /************************CONFIG**************************************************/
-int ARDUINO_ID = 1;
-const int WAIT_PERIOD = 200;
+int ARDUINO_ID = 2;
+const int WAIT_PERIOD = 50;
 /************************DHT22 sensor********************************************/
 //define DHT22
-const byte DHTPIN_1 = 6;     // what pin is the 1st sensor connected to
-const byte DHTPIN_2 = 7;     // what pin is the 2nd sensor connected to
-const byte DHTPIN_3 = 8;     // what pin is the 3rd sensor connected to
-const byte DHTPIN_4 = 9;     // what pin is the 4th sensor connected to
+const byte DHTPIN_1 = 5;     // what pin is the 1st sensor connected to
+const byte DHTPIN_2 = 6;     // what pin is the 2nd sensor connected to
+const byte DHTPIN_3 = 7;     // what pin is the 3rd sensor connected to
+const byte DHTPIN_4 = 8;     // what pin is the 4th sensor connected to
 #define DHTTYPE DHT22   // DHT 22  (AM2302)
 
 DHT dht1(DHTPIN_1, DHTTYPE);
@@ -23,8 +23,8 @@ DHT dht4(DHTPIN_4, DHTTYPE);
 char data_header[16];
 
 // Ethernet variables
-byte mac[] = {0x41, 0x52, 0x44, 0x55, 0x4E, 0xA0 + ARDUINO_ID}; // arduino id is coded into mac, so it's unique and identifiable
-IPAddress ip(147, 213, 232, 140 + ARDUINO_ID);
+byte mac[] = {0x10, 0x20, 0x30, 0x40, 0x50, 0x62}; // arduino id is coded into mac, so it's unique and identifiable
+IPAddress ip(147, 213, 232, 142);
 IPAddress gateway(147, 213, 232, 1);
 IPAddress subnet(255, 255, 255,0);
 IPAddress nameserver(147, 213, 1, 1);
@@ -39,9 +39,18 @@ void setup() {
   Serial.println("Initializing...");
 
   // Ethernet init
+  Serial.println("Ethernet init...");
   Ethernet.begin(mac, ip, nameserver, gateway, subnet);
-  Udp.begin(localPort);
+  delay(15000);
 
+  Serial.println("Udp init...");
+  if(!Udp.begin(localPort)) {
+    Serial.println("UDP failed...");
+  }
+
+  delay(15000);
+
+  Serial.println("DHT sensors init...");
   // Sensors init
   dht1.begin();
   dht2.begin();
@@ -60,14 +69,14 @@ void loop() {
   
   temp = dht1.readTemperature();
   if( !is_NaN(temp)) {
-    set_header(0,1);
+    set_header(8,1);
     sendData(data_header, temp);
     Serial.print("Temperature "); Serial.println(temp);
   }
   
   hum = dht1.readHumidity();
   if( !is_NaN(hum)) {
-    set_header(1,1);
+    set_header(9,1);
     sendData(data_header, hum);
     Serial.print("Humidity "); Serial.println(hum);
   }
@@ -78,14 +87,14 @@ void loop() {
   
   temp = dht2.readTemperature();
   if( !is_NaN(temp)) {
-    set_header(2,1);
+    set_header(10,1);
     sendData(data_header, temp);
     Serial.print("Temperature "); Serial.println(temp);
   }
   
   hum = dht2.readHumidity();
   if( !is_NaN(hum)) {
-    set_header(3,1);
+    set_header(11,1);
     sendData(data_header, hum);
     Serial.print("Humidity "); Serial.println(hum);
   }
@@ -96,14 +105,14 @@ void loop() {
   
   temp = dht3.readTemperature();
   if( !is_NaN(temp)) {
-    set_header(4,1);
+    set_header(12,1);
     sendData(data_header, temp);
     Serial.print("Temperature "); Serial.println(temp);
   }
   
   hum = dht3.readHumidity();
   if( !is_NaN(hum)) {
-    set_header(5,1);
+    set_header(13,1);
     sendData(data_header, hum);
     Serial.print("Humidity "); Serial.println(hum);
   }
@@ -114,21 +123,21 @@ void loop() {
   
   temp = dht4.readTemperature();
   if( !is_NaN(temp)) {
-    set_header(6,1);
+    set_header(14,1);
     sendData(data_header, temp);
     Serial.print("Temperature "); Serial.println(temp);
   }
   
   hum = dht4.readHumidity();
   if( !is_NaN(hum)) {
-    set_header(7,1);
+    set_header(15,1);
     sendData(data_header, hum);
     Serial.print("Humidity "); Serial.println(hum);
   }
   /*********************/
 
   Serial.println("*********************");
-  delay(WAIT_PERIOD); // wait to prevent unnecessary network load
+  //delay(WAIT_PERIOD); // wait to prevent unnecessary network load
 }
 
 void sendData(char* header, double value) {
@@ -138,6 +147,7 @@ void sendData(char* header, double value) {
     Udp.endPacket();
     
     Serial.println(header);
+    delay(WAIT_PERIOD);
 }
 
 void set_header(int sensor_id, int value_type) {
