@@ -1,4 +1,5 @@
 import java.io.*;
+import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -11,7 +12,7 @@ import java.util.*;
 public class DataManager {
     private static DataManager ourInstance = new DataManager();
     private static final String CSV_SEPARATOR = ";";
-    private static String LOGS_PATH = Configuration.getRootPath() + "logs/";
+    private static String LOGS_PATH = Configuration.ROOT_PATH + "logs/";
 
     public static String getLogsPath() {
         return LOGS_PATH;
@@ -137,7 +138,7 @@ public class DataManager {
 //                String[] firstLineArr = firstLine.split(CSV_SEPARATOR);
 //                Date dateFirst = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy").parse(firstLineArr[1]);
                 String[] line = result.split(CSV_SEPARATOR);
-                Date date =new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy").parse(line[1]);
+                Date date =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(line[1]);
                 //System.out.println(date.toString());
                 //System.out.println(Boolean.valueOf(new Date().getTime()-date.getTime()>=duration));
                 //System.out.println(""+(new Date().getTime()-date.getTime())+" "+duration);
@@ -177,11 +178,13 @@ public class DataManager {
 
     public String convertToCSV(LabData data){
         String writeData=null;
+        Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String date = ((SimpleDateFormat) formatter).format(data.getTimestamp());
         if (data instanceof MeasuredData) {
-            writeData = data.getId().toString()+CSV_SEPARATOR+data.getTimestamp().toString()+CSV_SEPARATOR+((MeasuredData) data).getValue();
+            writeData = data.getId().toString()+CSV_SEPARATOR+date+CSV_SEPARATOR+((MeasuredData) data).getValue();
         } else
         if (data instanceof BinaryStatus) {
-            writeData = data.getId().toString()+CSV_SEPARATOR+data.getTimestamp().toString()+CSV_SEPARATOR+((BinaryStatus) data).isValue();
+            writeData = data.getId().toString()+CSV_SEPARATOR+date+CSV_SEPARATOR+((BinaryStatus) data).isValue();
         }
         return writeData;
     }
@@ -223,7 +226,7 @@ public class DataManager {
             while ((st = br.readLine()) != null){
                 String[] data = st.split(CSV_SEPARATOR);
                 int sensorId = Integer.parseInt(data[0]);
-                Date time =new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy").parse(data[1]);
+                Date time =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(data[1]);
                 if(data[2].equals("true") || data[2].equals("false")){
                     result.add(new BinaryStatus(sensorId, time, Boolean.valueOf(data[2])));
                 } else {
