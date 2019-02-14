@@ -16,7 +16,7 @@ window['Highcharts'] = Highcharts;
 export class GraphComponent {
   @Input() graphType;
   @Input() yAxisTitle = '';
-  periodIndex = 0;
+  periodIndex = 6;
   periodList = [...PeriodListHours, ...PeriodListDays, ...PeriodListMinutes];
   typeLists = {
     'temperature': TypeTemperatureList,
@@ -34,7 +34,7 @@ export class GraphComponent {
   };
 
 
-  constructor(private graphDataService: GraphDataService, private ref: ApplicationRef){}
+  constructor(private graphDataService: GraphDataService, private ref: ApplicationRef, private changeDetectorRef: ChangeDetectorRef){}
 
   ngOnInit(){
     //console.log("nazov: ", this.typeLists[this.graphType][this.graphNameIndex].name);
@@ -89,8 +89,9 @@ export class GraphComponent {
           });
           this.graphDataFull = _.cloneDeep(this.graphData);
         })
+        //this.changeDetectorRef.detectChanges();
       }
-    );this.ref.tick();
+    );
   }
 
   filterDataByDate(date: Date, now: Date){

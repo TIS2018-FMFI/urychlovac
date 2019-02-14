@@ -7,9 +7,9 @@ import { throwError } from 'rxjs';
 
 @Injectable()
 export class DataService {
-  //private apiUrl: string = 'http://147.213.232.125/'; //TODO: tu bude SAV adresa kde je ulozeny subor
+  private apiUrl: string = 'http://147.213.232.125/'; //TODO: tu bude SAV adresa kde je ulozeny subor
   //private apiUrl: string = 'http://147.213.232.125/data/';
-  private apiUrl: string = 'http://localhost:4200/'
+  //private apiUrl: string = 'http://localhost:4200/'
 
   private httpOptions = {
     //headers: new HttpHeaders({}),
