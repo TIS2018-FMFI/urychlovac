@@ -20,7 +20,10 @@
             "tsConfig": "src/tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/DHT22_humidity_a1_3.csv",
+              "src/DHT22_humidity_a1_1.csv",
+              "src/DHT22_temperature_a1_1.csv"
             ],
             "styles": [
               "./node_modules/bootstrap/dist/css/bootstrap.min.css",

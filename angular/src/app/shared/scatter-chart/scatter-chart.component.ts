@@ -1,7 +1,6 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import * as _ from 'lodash';
 import { SCATTER_CHART } from '../charts';
-import { Period } from '../period.enum';
 
 @Component({
   selector: 'scatter-chart',
@@ -17,9 +16,9 @@ export class ScatterChartComponent implements OnChanges {
 
   ngOnChanges() {
     const clonedChart = _.cloneDeep(SCATTER_CHART);
-
     clonedChart.series[0].data = this.data;
     setTimeout(() => {
+      
       this.chart = {
         ...clonedChart
       };

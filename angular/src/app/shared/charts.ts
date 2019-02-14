@@ -15,39 +15,6 @@ export const CHART_BLUE_COLORS = [
     '#006837',
     '#149485',
   ];
-  
-export const LINE_CHART = {
-  chart: {
-      type: 'line'
-    },
-    title: {
-      text: 'Monthly Average Temperature'
-    },
-    xAxis: {
-      categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    },
-    yAxis: {
-      title: {
-        text: 'Temperature (°C)'
-      }
-    },
-    plotOptions: {
-      line: {
-        dataLabels: {
-          enabled: true
-        },
-        enableMouseTracking: true
-      }
-    },
-    series: [{
-      name: 'Tokyo',
-      data: [7.0, 6.9, 9.5, 14.5, 18.4, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
-    }, {
-      name: 'London',
-      data: [3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8]
-    }]
-}
-
 
 export const SCATTER_CHART = {
     chart: {
@@ -76,13 +43,13 @@ export const SCATTER_CHART = {
         showLastLabel: true,
         labels: {
           style: {
-            fontSize: '15px'
+            fontSize: '13px'
           }
         }
       },
       yAxis: {
         title: {
-          text: 'Weight (kg)',
+          text: '',
           style: {
             fontSize: '15px'
           }
@@ -124,12 +91,12 @@ export const SCATTER_CHART = {
           },
           tooltip: {
             // headerFormat: '<b>{series.name}</b><br>',
-            pointFormat: '{point.x} cm, {point.y} kg'
+            pointFormat: '{point.x} , {point.y} '
           }
         }
       },
       series: [{
-        name: 'Female',
+        //name: 'Female',
         color: 'rgba(223, 83, 83, .5)',
         data: []
       }]
