@@ -60,8 +60,11 @@ public class ArduinoCommunication extends Thread {
                 System.out.println("ARDUINO: Received packet: \"" + received + "\" (raw form).");
 
                 LabData receivedData = dataProcessor.processData(received);
+                if (dataProcessor.getArduinoIdFromPacket(received) != null) {
+                    lastUpdates.put(dataProcessor.getArduinoIdFromPacket(received), System.currentTimeMillis());
+                }
+
                 if (receivedData != null) {
-                    lastUpdates.put(receivedData.getId(), System.currentTimeMillis());
                     DataManager.getInstance().addData(receivedData);
                 }
             } catch (SocketTimeoutException e) {

@@ -12,8 +12,6 @@ public class DataProcessor {
     // I[0]A[1]S[2]T[3]V[4] if [1] == 0
     // example I0A0I01T1V1.33
     //[0] Arduino ID
-    //      0 = data arduino
-    //      1-9 = notification arduinos
     //[1] Arduino type
     //      0 = measurment/statuses
     //      1 = notification
@@ -28,8 +26,6 @@ public class DataProcessor {
 
     // I[0]A[1]S[2] if [1] == 1
     //[0] Arduino ID
-    //      0 = data arduino
-    //      1-9 = notification arduinos
     //[1] Arduino type
     //      0 = measurment/statuses
     //      1 = notification
@@ -82,9 +78,23 @@ public class DataProcessor {
                 Main.getNotificationManager().sendNotificationArduinoFault(input.charAt(1) - '0', "GSM modul hlasi chybu");
                 System.out.println("ARDUINO: Notification Arduino with ID " + (input.charAt(1) - '0') + " has an issue");
             }
+
+            return null;
         }
 
         System.out.println("ARDUINO: ERROR: Couldn't parse packet!");
         return null;
+    }
+
+    public Integer getArduinoIdFromPacket(String packet) {
+        try {
+            if (packet.charAt(0) == 'I' && packet.charAt(1) >= '0' && packet.charAt(1) <= '9') {
+                return packet.charAt(1) - '0';
+            } else {
+                return null;
+            }
+        } catch (IndexOutOfBoundsException e) {
+            return null;
+        }
     }
 }

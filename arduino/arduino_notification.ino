@@ -2,15 +2,21 @@
 #include <UIPEthernet.h>
 
 // CONFIG:
-const int ARDUINO_ID = 3;                 // ID of the particular arduino you're flashing this on - TWO DIFFERENT ARDUINOS SHOULDN'T HAVE THE SAME ID
-const long PHONE_NUM_1 = 950626299;       // add as many phone numbers as needed - don't forget to add duplicate and edit rows where they're used too
+const int ARDUINO_ID = 4;                 // ID of the particular arduino you're flashing this on - TWO DIFFERENT ARDUINOS SHOULDN'T HAVE THE SAME ID
+const long PHONE_NUM_1 = 948898381;       // add as many phone numbers as needed - don't forget to add duplicate and edit rows where they're used too
 const int POWER_OUTAGE_PIN = 2;           // digital pin to which power outage detector is connected
 const int OK_MESSAGE_FREQUENCY = 10000;   // how often (in milliseconds) should arduino send message to backend about its status
 
 // Configure software serial port
 SoftwareSerial SIM900(7, 8);
 
-// Configure UDP
+// Ethernet variables
+byte mac[] = {0x10, 0x20, 0x30, 0x40, 0x50, 0x64}; // arduino id is coded into mac, so it's unique and identifiable
+IPAddress ip(147, 213, 232, 144);
+IPAddress gateway(147, 213, 232, 1);
+IPAddress subnet(255, 255, 255,0);
+IPAddress nameserver(147, 213, 1, 1);
+unsigned int localPort = 5000;
 EthernetUDP udp;
 
 // Helper variables
@@ -31,9 +37,16 @@ void setup() {
   gsmCheck();
 
   // Ethernet init
-  byte mac[] = {0x41, 0x52, 0x44, 0x55, 0x4E, 0xA0 + ARDUINO_ID}; // arduino id is coded into mac, so it's unique and identifiable
-  Ethernet.begin(mac, IPAddress(147, 213, 232, 140 + ARDUINO_ID));
-  udp.begin(5000);
+  Serial.println("Ethernet init...");
+  Ethernet.begin(mac, ip, nameserver, gateway, subnet);
+  delay(15000);
+
+  Serial.println("Udp init...");
+  if(!udp.begin(localPort)) {
+    Serial.println("UDP failed...");
+  }
+
+  delay(15000);
 }
 
 void loop() {
@@ -137,7 +150,7 @@ void sendPacket(char* message) {
    udp.write(message);
    Serial.println("Packet sent");
    udp.endPacket();
-   udp.stop();
+   //udp.stop();
    Serial.println("Packet object destroyed");
 }
 

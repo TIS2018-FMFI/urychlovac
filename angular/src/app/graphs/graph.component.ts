@@ -13,7 +13,7 @@ window['Highcharts'] = Highcharts;
   templateUrl: './graph.component.html',
   styleUrls: ['./graphs.component.css']
 })
-export class GraphComponent implements OnInit{
+export class GraphComponent {
   @Input() graphType;
   @Input() yAxisTitle = '';
   periodIndex = 0;

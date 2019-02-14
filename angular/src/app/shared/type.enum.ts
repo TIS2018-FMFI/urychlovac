@@ -46,7 +46,7 @@ export const TypeTemperatureList = [
     {
         name: "DS18_coolant_temp_2",
         value: 23
-    }
+    },
 ]
 
 export const TypeHumidityList = [
