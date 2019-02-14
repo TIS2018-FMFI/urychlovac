@@ -15,12 +15,17 @@ public class DataManager {
     private static final String FILE_SEPARATOR = System.getProperty("file.separator");
     private static String LOGS_PATH = "logs" + FILE_SEPARATOR;      // for archived logs
     private static String DATA_PATH = "www"  + FILE_SEPARATOR + "data" + FILE_SEPARATOR;    // for frontend
+    private static int FRONTEND_DATA_HISTORY_MILLIS = 432000000;
 
     public static String getLogsPath() {
         return LOGS_PATH;
     }
 
-    private static String ARCHIVE_PATH_SUFFIX = "archive" + FILE_SEPARATOR;
+    public static String getDataPath() {
+        return DATA_PATH;
+    }
+
+    //private static String ARCHIVE_PATH_SUFFIX = "archive" + FILE_SEPARATOR;
     private static long NrLines= 605000000/Main.getConfig().getLoggingFrequency();
 
     private static final Map<Integer, String> SENSORS;
@@ -61,7 +66,7 @@ public class DataManager {
         aMap.put(22, "DS18_coolant_temp_1"); //teplota measured
         aMap.put(23, "DS18_coolant_temp_2"); //teplota measured
 
-        aMap.put(24, "coolant level"); //stav hladiny chladiacej kvapaliny boolean
+        aMap.put(24, "coolant_level"); //stav hladiny chladiacej kvapaliny boolean
 
         aMap.put(25, "front_door_switch"); //Predne dvere boolean
         aMap.put(26, "back_door_switch"); //Zadne dvere boolean
@@ -99,7 +104,7 @@ public class DataManager {
         long freq = Main.getConfig().getLoggingFrequency();
         checkData(data);        // check notification conditions
         String fileName = DATA_PATH + SENSORS.get(data.getId()) + ".csv";
-        if(timePassed(data.getId(),freq)) {
+        if(timePassed(data.getId(), FRONTEND_DATA_HISTORY_MILLIS)) {
             String writeData = convertToCSV(data);
             Calendar cal = Calendar.getInstance();
             cal.setTime(data.getTimestamp());
