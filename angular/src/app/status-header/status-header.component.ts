@@ -22,10 +22,11 @@ export class StatusHeaderComponent implements OnInit {
   on: string = 'red';
 
   statuses: Status[] = [
-    new Status("Acc. doors", true, this.off, this.successClass), //modalne okno sa zavrie samo po 10sek
-    new Status("SF6 leak", true, this.off, this.successClass),
-    new Status("Cool. liquid state", false, this.on, this.dangerClass), //malo chladiacej kvapaliny
-    new Status("Lab electricity", true, this.off, this.successClass),
+    new Status("Acc. Front doors", true, this.off, this.successClass), //modalne okno sa zavrie samo po 10sek
+    //new Status("SF6 leak", true, this.off, this.successClass),
+    new Status("Acc. Back doors", true, this.off, this.successClass),
+    new Status("Cool. liquid state", true, this.on, this.dangerClass), //malo chladiacej kvapaliny
+    //new Status("Lab electricity", true, this.off, this.successClass),
     new Status("Acc. high voltage", true, this.off, this.successClass), //modalne okno, ked sa pristroj vypne - oranzove - automaticky sa vypne, 
                                                                                       //ked napatie padne - treba ho vypnut manualne 
 

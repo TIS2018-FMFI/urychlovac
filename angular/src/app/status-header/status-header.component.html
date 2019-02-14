@@ -18,13 +18,13 @@
           'label-success': status.state, 
           'label-danger': !status.state
         }"
-        (click)="setSelectedWarningOpenModal(status.name)"
+        
       > {{ status.name }} </span>
   
         <label
           class="switch pull-left"
         >
-        <!-- <input type="checkbox">
+        <!-- (click)="setSelectedWarningOpenModal(status.name)" <input type="checkbox">
         <span class="slider round"></span> -->
         <!-- <ui-switch 
           checkedLabel="on"
