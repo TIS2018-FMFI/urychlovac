@@ -15,7 +15,7 @@ public class NotificationManager{
         Main.getArduinoCommunication().sendMessage(3, rule.getText());
         Main.getArduinoCommunication().sendMessage(4, rule.getText());
         //System.out.println("NotifManag: "+rule.getText());
-        File file = new File(DataManager.getInstance().getLogsPath()+"NOTIFICATIONS.txt");
+        File file = new File(DataManager.getInstance().getDataPath()+"NOTIFICATIONS.txt");
         try {
             file.createNewFile();
         } catch (IOException e) {
