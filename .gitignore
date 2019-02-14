@@ -6,3 +6,8 @@ out/
 *.iws
 .idea/
 .gradle/
+angular/src/k.csv
+angular/src/New Microsoft Excel Worksheet.xlsx
+angular/src/DHT22_temperature_a1_1.csv
+angular/src/DHT22_humidity_a1_3.csv
+angular/src/DHT22_humidity_a1_1.csv

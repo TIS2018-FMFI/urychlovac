@@ -8,7 +8,7 @@ import { Period } from '../period.enum';
   template: `<div [ng2-highcharts]="chart"></div>`
 })
 export class ScatterChartComponent implements OnChanges {
-  @Input() data;
+  @Input() data: any;
   @Input() graphType;
   @Input() period;
   @Input() yAxisTitle = '';
@@ -18,8 +18,8 @@ export class ScatterChartComponent implements OnChanges {
   ngOnChanges() {
     const clonedChart = _.cloneDeep(SCATTER_CHART);
 
-    clonedChart.series[0].data = this.data;
     setTimeout(() => {
+      clonedChart.series[0].data = this.data;
       this.chart = {
         ...clonedChart
       };
