@@ -90,9 +90,13 @@ public class DataManager {
 
     public void initFiles(){
         for(Integer key : SENSORS.keySet()){
-            File file = new File(DATA_PATH +SENSORS.get(key)+".csv");
+            File file = new File(DATA_PATH + SENSORS.get(key) + ".csv");
             try {
-                file.createNewFile();
+                if (file.createNewFile()) {
+                    System.out.println("Created " + file.getAbsolutePath());
+                } else {
+                    System.out.println("Failed to create " + file.getAbsolutePath());
+                }
             } catch (IOException e) {
                 System.out.println("DATA LOGGING: Failed creating file for frontend!");
                 e.printStackTrace();
@@ -104,7 +108,7 @@ public class DataManager {
         long freq = Main.getConfig().getLoggingFrequency();
         checkData(data);        // check notification conditions
         String fileName = DATA_PATH + SENSORS.get(data.getId()) + ".csv";
-        if(timePassed(data.getId(), FRONTEND_DATA_HISTORY_MILLIS)) {
+        if(timePassed(data.getId(), Main.getConfig().getLoggingFrequency())) {
             String writeData = convertToCSV(data);
             Calendar cal = Calendar.getInstance();
             cal.setTime(data.getTimestamp());
@@ -136,7 +140,7 @@ public class DataManager {
     public boolean timePassed(int sensorId, long duration){
         String result="";
 
-        int linecount =0;
+        int linecount = 0;
         File file = new File(DATA_PATH + SENSORS.get(sensorId) + ".csv");
         try {
             BufferedReader br = new BufferedReader(new FileReader(file));
@@ -157,8 +161,8 @@ public class DataManager {
                 //System.out.println(Boolean.valueOf(new Date().getTime()-date.getTime()>=duration));
                 //System.out.println(""+(new Date().getTime()-date.getTime())+" "+duration);
                 if (Integer.parseInt(line[0])==sensorId && new Date().getTime()-date.getTime()>=duration){
-                    if (NrLines>=linecount){
-                        removeFirstLine(DATA_PATH +SENSORS.get(sensorId)+".csv");
+                    if (NrLines < linecount){
+                        removeFirstLine(DATA_PATH + SENSORS.get(sensorId) + ".csv");
                     }
                     return true;
                 }
@@ -205,6 +209,8 @@ public class DataManager {
     }
 
     public boolean checkData(LabData data){
+        // TODO: KONTROLOVAT VSETKY HODNOTY, NIE LEN AKTUALNU
+
         //List<NotificationRule> rules = Main.getConfig().getNotificationRules();
         for (NotificationRule rule : Main.getConfig().getNotificationRules()) {
             //System.out.println(rule.getText());
@@ -212,7 +218,7 @@ public class DataManager {
             //System.out.println(control[0]);
             for (String condition : control){
                 if(data instanceof BinaryStatus){
-                    if(data.getId() == Integer.parseInt(condition) && !((BinaryStatus) data).isValue()){
+                    if(data.getId() == Integer.parseInt(condition) && ((BinaryStatus) data).isValue()){
                         Main.getNotificationManager().sendNotification(rule);
                         return false;
                     }
