@@ -13,13 +13,14 @@ import java.util.List;
 public class Main {
     private static ArduinoCommunication arduinoCommunication;
     private static FrontEndSlave frontEnd;
-    private static NotificationManager notificationManager = new NotificationManager();
+    private static NotificationManager notificationManager;
     private static Configuration config;
     private static VacControllerCommunication vacControllerCommunication;
 
     public Main() {
         System.out.println("\"################# GHKP URYCHLOVAC #################");
         config = new Configuration();
+        notificationManager = new NotificationManager();
         DataManager DM = DataManager.getInstance();
         DM.initFiles();
 
